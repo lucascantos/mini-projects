@@ -1,0 +1,225 @@
+Cruzeiro do Sul;Acre;SBCZ;CZS;Cruzeiro do Sul International Airport;Infraero
+Feijó;Acre;SNOU;FEJ;Feijó Airport;
+Rio Branco;Acre;SBRB;RBR;Plácido de Castro International Airport;Infraero
+Tarauacá;Acre;SBTK;TRQ;José Galera dos Santos Airport;
+Maceió;Alagoas;SBMO;MCZ;Zumbi dos Palmares International Airport (Palmares);Infraero
+Macapá;Amapá;SBMQ;MCP;Alberto Alcolumbre International Airport;Infraero
+Barcelos;Amazonas;SWBC;BAZ;Barcelos Airport;
+Barreirinha;Amazonas;SWBI;;Barreirinha Airport;
+Borba;Amazonas;SWBR;RBB;Borba Airport;
+Carauari;Amazonas;SWCA;CAF;Carauari Airport;
+Coari;Amazonas;SWKO;CIZ;Coari Airport;
+Eirunepé;Amazonas;SWEI;ERN;Amaury Feitosa Tomaz Airport;
+Fonte Boa;Amazonas;SWOB;FBA;Fonte Boa Airport;
+Humaitá;Amazonas;SWHT;HUW;Francisco Correa da Cruz Airport;
+Lábrea;Amazonas;SWLB;LBR;Lábrea Airport;
+Manaus;Amazonas;SBEG;MAO;Brig. Eduardo Gomes International Airport;Infraero
+Manicoré;Amazonas;SBMY;MNX;Manicoré Airport;
+Maués;Amazonas;SWMW;MBZ;Maués Airport;
+Parintins;Amazonas;SWPI;PIN;Júlio Belém Airport;
+Porto Urucu (Coari);Amazonas;SBUY;;Porto Urucu Airport;Petrobras
+Santa Isabel do Rio Negro;Amazonas;SWTP;IRZ;Tapuruquara Airport;
+Santo Antônio do Içá;Amazonas;SWII;IPG;Ipiranga Airport;
+São Gabriel da Cachoeira;Amazonas;SBUA;SJL;São Gabriel da Cachoeira Airport;
+São Paulo de Olivença;Amazonas;SDCG;OLC;Sen. Eunice Michiles Airport;
+Tabatinga;Amazonas;SBTT;TBT;Tabatinga International Airport;Infraero
+Tefé;Amazonas;SBTF;TFF;Tefé Airport;Infraero
+Barra;Bahia;SNBX;BQQ;Barra Airport;
+Barreiras;Bahia;SNBR;BRA;Barreiras Airport;
+Bom Jesus da Lapa;Bahia;SBLP;LAZ;Bom Jesus da Lapa Airport;
+Caravelas;Bahia;SBCV;CRQ;Caravelas Airport;
+Feira de Santana;Bahia;SBFE;FEC;João Durval Carneiro Airport;Aero Feira de Santana
+Guanambi;Bahia;SNGI;GNM;Guanambi Airport;
+Ilhéus;Bahia;SBIL;IOS;Jorge Amado Airport;Infraero
+Lençóis;Bahia;SBLE;LEC;Cel. Horácio de Mattos Airport;
+Paulo Afonso;Bahia;SBUF;PAV;Paulo Afonso Airport;Infraero
+Porto Seguro;Bahia;SBPS;BPS;Porto Seguro Airport;Sinart
+Salvador da Bahia;Bahia;SBSV;SSA;Dep. Luís Eduardo Magalhães International Airport (2 de Julho);Infraero
+Teixeira de Freitas;Bahia;SNTF;TXF;9 de maio Airport;
+Una;Bahia;SBTC;UNA;Una-Comandatuba Airport;Socicam
+Valença;Bahia;SNVB;VAL;Valença Airport;
+Vitória da Conquista;Bahia;SBQV;VDC;Pedro Otacílio Figueiredo Airport;Socicam
+Aracati;Ceará;SNAT;;Dragão do Mar Airport;
+Fortaleza;Ceará;SBFZ;FOR;Pinto Martins – Fortaleza International Airport;Infraero
+Jijoca de Jericoacoara / Cruz;Ceará;SBJE;JJD;Comte. Ariston Pessoa Regional Airport;
+Juazeiro do Norte;Ceará;SBJU;JDO;Orlando Bezerra de Menezes Airport;Infraero
+Cachoeiro de Itapemirim;Espírito Santo;SNKI;CDI;Raimundo de Andrade Airport;
+Vitória;Espírito Santo;SBVT;VIX;Eurico de Aguiar Salles Airport (Goiabeiras);Infraero
+Brasília;Federal District;SBBR;BSB;Pres. Juscelino Kubitschek International Airport;Inframérica
+Caldas Novas / Rio Quente;Goiás;SBCN;CLV;Nelson Ribeiro Guimarães Airport;Socicam
+Goiânia;Goiás;SWNV; ;Aeródromo Nacional de Aviação;
+Goiânia;Goiás;SBGO;GYN;Santa Genoveva Airport;Infraero
+Itumbiara;Goiás;SBIT;ITR;Francisco Vilela do Amaral Airport;
+Minaçu;Goiás;SWIQ;MQH;Minaçu Airport;
+Rio Verde;Goiás;SWLC;RVD;Gal. Leite de Castro Airport;
+Barreirinhas;Maranhão;SSRS;BRB;Barreirinhas Airport;
+Carolina;Maranhão;SBCI;CLN;Carolina Airport;
+Imperatriz;Maranhão;SBIZ;IMP;Pref. Renato Moreira Airport;Infraero
+São Luís;Maranhão;SBSL;SLZ;Mal. Cunha Machado International Airport (Tirirical);Infraero
+Água Boa;Mato Grosso;SWHP;HPX;Água Boa Airport;
+Alta Floresta;Mato Grosso;SBAT;AFL;Piloto Oswaldo Marques Dias Airport;
+Aripuanã;Mato Grosso;SWRP;;Aripuanã Airport;
+Barra do Garças;Mato Grosso;SBBW;BPG;Barra do Garças Airport;
+Confresa;Mato Grosso;SWKF;CFO;Confresa Airport;Frenova
+Cuiabá / Várzea Grande;Mato Grosso;SBCY;CGB;Mal. Rondon International Airport;Infraero
+Juara;Mato Grosso;SIZX;JUA;Inácio Luís do Nascimento Airport;
+Juína;Mato Grosso;SWJN;JIA;Juína Airport;
+Juruena;Mato Grosso;SWJU;JRN;Juruena Airport;
+Lucas do Rio Verde;Mato Grosso;SILC;LVR;Bom Futuro Airport;
+Matupá;Mato Grosso;SWXM;MBK;Orlando Villas-Bôas Regional Airport;
+Rondonópolis;Mato Grosso;SWRD;ROO;Maestro Marinho Franco Airport;
+São Félix do Araguaia;Mato Grosso;SWFX;SXO;São Félix do Araguaia Airport;
+Sinop;Mato Grosso;SWSI;OPS;Presidente João Figueiredo Airport;
+Sorriso;Mato Grosso;SBSO;SMT;Adolino Bedin Regional Airport;
+Bonito;Mato Grosso do Sul;SBDB;BYO;Bonito Airport;Dix
+Campo Grande;Mato Grosso do Sul;SBCG;CGR;Campo Grande International Airport;Infraero
+Corumbá;Mato Grosso do Sul;SBCR;CMG;Corumbá International Airport;Infraero
+Dourados;Mato Grosso do Sul;SBDO;DOU;Francisco de Matos Pereira Airport;
+Ponta Porã;Mato Grosso do Sul;SBPP;PMG;Ponta Porã International Airport;Infraero
+Três Lagoas;Mato Grosso do Sul;SBTG;TJL;Plínio Alarcom Airport;
+Araxá;Minas Gerais;SBAX;AAX;Araxá Airport;
+Belo Horizonte;Minas Gerais;SBPR;;Carlos Prates Airport;Infraero
+Belo Horizonte;Minas Gerais;SBBH;PLU;Pampulha-Carlos Drummond de Andrade Airport;Infraero
+Belo Horizonte / Confins;Minas Gerais;SBCF;CNF;Tancredo Neves International Airport;BH Airport
+Diamantina;Minas Gerais;SNDT;DTI;Diamantina Airport;
+Divinópolis;Minas Gerais;SNDV;DIQ;Brig. Cabral Airport;Socicam
+Governador Valadares;Minas Gerais;SBGV;GVR;Cel. Altino Machado de Oliveira Airport;
+Ipatinga / Santana do Paraíso;Minas Gerais;SBIP;IPN;Usiminas Airport;Socicam
+Januária;Minas Gerais;SNJN;JNA;Januária Airport;
+Juiz de Fora;Minas Gerais;SBJF;JDF;Francisco Álvares de Assis Airport;Sinart
+Juiz de Fora / Goianá;Minas Gerais;SBZM;IZA;Pres. Itamar Franco Airport (Zona da Mata);Socicam
+Montes Claros;Minas Gerais;SBMK;MOC;Mário Ribeiro Airport;Infraero
+Patos de Minas;Minas Gerais;SNPD;POJ;Pedro Pereira dos Santos Airport;
+Poços de Caldas;Minas Gerais;SBPC;POO;Emb. Walther Moreira Salles Airport;
+São João del-Rei;Minas Gerais;SNJR;JDR;Pref. Octávio de Almeida Neves Airport;Socicam
+São Lourenço;Minas Gerais;SNLO;SSO;São Lourenço Airport;
+Uberaba;Minas Gerais;SBUR;UBA;Mário de Almeida Franco Airport;Infraero
+Uberlândia;Minas Gerais;SBUL;UDI;Ten. Cel. Av. César Bombonato Airport;Infraero
+Varginha;Minas Gerais;SBVG;VAG;Maj. Brig. Trompowsky Airport;
+Apucarana;Paraná;SSAP;APU;Capt. João Busse Airport;SEIL
+Arapongas;Paraná;SSOG;APX;Alberto Bertelli Airport;SEIL
+Arapoti;Paraná;SSYA;AAG;Avelino Vieira Airport;SEIL
+Cascavel;Paraná;SBCA;CAC;Adalberto Mendes da Silva Airport;SEIL
+Cianorte;Paraná;SSCT;;Gastão de Mesquita Filho Airport;SEIL
+Cornélio Procópio;Paraná;SSCP;CKO;Francisco Lacerda Junior Airport;SEIL
+Curitiba;Paraná;SBBI;BFH;Bacacheri Airport;Infraero
+Curitiba / São José dos Pinhais;Paraná;SBCT;CWB;Afonso Pena International Airport;Infraero
+Foz do Iguaçu;Paraná;SBFI;IGU;Cataratas International Airport;Infraero
+Francisco Beltrão;Paraná;SSFB;FBE;Paulo Abdala Airport;SEIL
+Guaíra;Paraná;SSGY;;Guaíra Airport;SEIL
+Guarapuava;Paraná;SBGU;GPB;Tancredo Thomas de Faria Airport;SEIL
+Londrina;Paraná;SBLO;LDB;Gov. José Richa Airport;Infraero
+Maringá;Paraná;SBMG;MGF;Sílvio Name Júnior Regional Airport;SEIL
+Paranaguá;Paraná;SSPG;PNG;Santos Dumont Airport;SEIL
+Paranavaí;Paraná;SSPI;PVI;Edu Chaves Airport;SEIL
+Pato Branco;Paraná;SSPB;PTO;Juvenal Loureiro Cardoso Airport;SEIL
+Ponta Grossa;Paraná;SSZW;PGZ;Comte. Antonio Amilton Beraldo Airport;SEIL
+Porecatu;Paraná;SSPK;;Porecatu Airport;
+Telêmaco Borba;Paraná;SBTL;TEC;Telêmaco Borba Airport;SEIL
+Toledo;Paraná;SBTD;TOW;Luiz dal Canalle Filho Airport;SEIL
+Umuarama;Paraná;SSUM;UMU;Orlando de Carvalho Airport;SEIL
+União da Vitória;Paraná;SSUV;;José Cleto Airport;SEIL
+Campina Grande;Paraíba;SBKG;CPV;Pres. João Suassuna Airport;Infraero
+João Pessoa / Bayeux;Paraíba;SBJP;JPA;Pres. Castro Pinto International Airport;Infraero
+Altamira;Pará;SBHT;ATM;Altamira Airport;Infraero
+Belém;Pará;SBJC;;Brig. Protásio de Oliveira Airport (Júlio César);Infraero
+Belém;Pará;SBBE;BEL;Val de Cans-Júlio Cezar Ribeiro International Airport;Infraero
+Carajás (Parauapebas);Pará;SBCJ;CKS;Carajás Airport;Infraero
+Conceição do Araguaia;Pará;SBAA;CDJ;Conceição do Araguaia Airport;
+Itaituba;Pará;SBIH;ITB;Itaituba Airport;
+Marabá;Pará;SBMA;MAB;João Correa da Rocha Airport;Infraero
+Monte Dourado (Almeirim);Pará;SBMD;MEU;Serra do Areão Airport;
+Novo Progresso;Pará;SJNP;NPR;Novo Progresso Airport;
+Oriximiná;Pará;SNOX;ORX;Oriximiná Airport;
+Ourilândia do Norte;Pará;SDOW;OIA;Ourilândia do Norte Airport;
+Porto de Trombetas (Oriximiná);Pará;SBTB;TMT;Porto de Trombetas Airport;MRN S/A
+Redenção;Pará;SNDC;RDC;Redenção Airport;
+Santana do Araguaia;Pará;SNKE;CMP;Santana do Araguaia Airport;
+Santarém;Pará;SBSN;STM;Maestro Wilson Fonseca Airport;Infraero
+São Félix do Xingu;Pará;SNFX;SXX;São Félix do Xingu Airport;
+Tucuruí;Pará;SBTU;TUR;Tucuruí Airport;
+Xinguara;Pará;;XIG;Xinguara Municipal Airport;
+Caruaru;Pernambuco;SNRU;CAU;Oscar Laranjeiras Airport;
+Fernando de Noronha;Pernambuco;SBFN;FEN;Fernando de Noronha Airport;Dix
+Petrolina;Pernambuco;SBPL;PNZ;Sen. Nilo Coelho Airport;Infraero
+Recife;Pernambuco;SBRF;REC;Guararapes-Gilberto Freyre International Airport;Infraero
+Oeiras;Piauí;SNOE;;Oeiras Airport;
+Parnaíba;Piauí;SBPB;PHB;Pref. Dr. João Silva Filho International Airport;Infraero
+Picos;Piauí;SNPC;PCS;Sen. Helvídio Nunes Airport;Esaero
+São Raimundo Nonato;Piauí;SWKQ;;Serra da Capivara Airport;Esaero
+Teresina;Piauí;SBTE;THE;Sen. Petrônio Portella Airport;Infraero
+Armação dos Búzios;Rio de Janeiro;SBBZ;BZC;Umberto Modiano Airport;
+Cabo Frio;Rio de Janeiro;SBCB;CFB;Cabo Frio International Airport;Libra
+Campos dos Goytacazes;Rio de Janeiro;SBCP;CAW;Bartolomeu Lysandro Airport;Infraero
+Macaé;Rio de Janeiro;SBME;MEA;Benedito Lacerda Airport;Infraero
+Maricá;Rio de Janeiro;SDMC;;Maricá Airport;
+Resende;Rio de Janeiro;SDRS;REZ;Resende Airport;
+Rio de Janeiro;Rio de Janeiro;SBGL;GIG;Galeão-Antonio Carlos Jobim International Airport;Aeroporto Rio de Janeiro
+Rio de Janeiro;Rio de Janeiro;SBJR;;Jacarepaguá-Roberto Marinho Airport;Infraero
+Rio de Janeiro;Rio de Janeiro;SBRJ;SDU;Santos Dumont Airport;Infraero
+Mossoró;Rio Grande do Norte;SBMS;MVF;Gov. Dix-Sept Rosado Airport;
+Natal / São Gonçalo do Amarante;Rio Grande do Norte;SBSG;NAT;Gov. Aluízio Alves International Airport;Inframérica
+Alegrete;Rio Grande do Sul;SSLT;ALQ;Gaudêncio Machado Ramos Airport;
+Bagé;Rio Grande do Sul;SBBG;BGX;Comte. Gustavo Kraemer Airport;Infraero
+Caxias do Sul;Rio Grande do Sul;SBCX;CXJ;Hugo Cantergiani Regional Airport (Campo dos Bugres);DAP
+Erechim;Rio Grande do Sul;SSER;ERM;Erechim Airport;DAP
+Ijuí;Rio Grande do Sul;SSIJ;IJU;João Batista Bos Filho Airport;DAP
+Passo Fundo;Rio Grande do Sul;SBPF;PFB;Lauro Kurtz Airport;DAP
+Pelotas;Rio Grande do Sul;SBPK;PET;João Simões Lopes Neto International Airport;Infraero
+Porto Alegre;Rio Grande do Sul;SBPA;POA;Salgado Filho International Airport;Infraero
+Rio Grande;Rio Grande do Sul;SJRG;RIG;Rio Grande Regional Airport;DAP
+Santa Maria;Rio Grande do Sul;SBSM;RIA;Santa Maria Airport;Brazilian Air Force
+Santa Rosa;Rio Grande do Sul;SSZR;SRA;Luís Alberto Lehr Airport;DAP
+Santiago;Rio Grande do Sul;SSST;;Santiago Airport;
+Santo Ângelo;Rio Grande do Sul;SBNM;GEL;Sepé Tiaraju Airport;DAP
+São Borja;Rio Grande do Sul;SSSB;;São Borja Airport;
+Uruguaiana;Rio Grande do Sul;SBUG;URG;Ruben Berta International Airport;Infraero
+Cacoal;Rondônia;SSKW;OAL;Capital do Café Airport;
+Ji-Paraná;Rondônia;SBJI;JPR;José Coleto Airport;
+Porto Velho;Rondônia;SBPV;PVH;Gov. Jorge Teixeira de Oliveira International Airport;Infraero
+Vilhena;Rondônia;SBVH;BVH;Brig. Camarão Airport;
+Boa Vista;Roraima;SBBV;BVB;Atlas Brasil Cantanhede International Airport;Infraero
+Caçador;Santa Catarina;SBCD;CFC;Carlos Alberto da Costa Neves Airport;
+Chapecó;Santa Catarina;SBCH;XAP;Serafin Enoss Bertaso Airport;
+Concórdia;Santa Catarina;SSCK;CCI;Olavo Cecco Rigon Airport;
+Criciúma / Forquilhinha;Santa Catarina;SBCM;CCM;Diomício Freitas Airport;Infraero
+Florianópolis;Santa Catarina;SBFL;FLN;Hercílio Luz International Airport;Infraero
+Jaguaruna;Santa Catarina;SBJA;JJG;Humberto Ghizzo Bortoluzzi Regional Airport;
+Joaçaba;Santa Catarina;SSJA;JCB;Santa Terezinha Airport;
+Joinville;Santa Catarina;SBJV;JOI;Lauro Carneiro de Loyola Airport;Infraero
+Lages;Santa Catarina;SBLJ;LAJ;Antônio Correia Pinto de Macedo Airport;
+Navegantes;Santa Catarina;SBNF;NVT;Min. Victor Konder International Airport;Infraero
+São Miguel do Oeste;Santa Catarina;SSOE;SQX;Hélio Wasum Airport;
+Videira;Santa Catarina;SSVI;VIA;Ângelo Ponzoni Airport;Videira
+Aracaju;Sergipe;SBAR;AJU;Santa Maria Airport;Infraero
+Araçatuba;São Paulo;SBAU;ARU;Dario Guarita Airport;DAESP
+Araraquara;São Paulo;SBAQ;AQA;Bartolomeu de Gusmão Airport;DAESP
+Assis;São Paulo;SNAX;AIF;Marcelo Pires Halzhausen Airport;DAESP
+Avaré / Arandu;São Paulo;SDRR;QVP;Comte. Luiz Gonzaga Luth Airport;DAESP
+Barretos;São Paulo;SNBA;BAT;Chafei Amsei Airport;
+Bauru;São Paulo;SBBU;BAU;Comte. João Ribeiro de Barros Airport;
+Bauru / Arealva;São Paulo;SBAE;JTC;Moussa Nakhl Tobias Airport;DAESP
+Bragança Paulista;São Paulo;SDBP;BJP;Arthur Siqueira Airport;DAESP
+Campinas;São Paulo;SDAM;;Campo dos Amarais Airport;DAESP
+Campinas;São Paulo;SBKP;VCP;Viracopos International Airport;Aeroportos Brasil
+Franca;São Paulo;SIMK;FRC;Ten. Lund Presotto Airport;DAESP
+Gavião Peixoto;São Paulo;SBGP; ;Gavião Peixoto Aerodrome;Embraer
+Jundiaí;São Paulo;SBJD;;Comte. Rodolfo Rolim Amaro Airport;DAESP
+Lins;São Paulo;SBLN;LIP;Gov. Lucas Nogueira Garcez Airport;
+Marília;São Paulo;SBML;MII;Frank Miloye Milenkowichi Airport;DAESP
+Ourinhos;São Paulo;SDOU;OUS;Jornalista Benedito Pimentel Airport;DAESP
+Presidente Prudente;São Paulo;SBDN;PPB;Presidente Prudente Airport;DAESP
+Ribeirão Preto;São Paulo;SBRP;RAO;Dr. Leite Lopes Airport;DAESP
+São Carlos;São Paulo;SDSC;QSC;Mário Pereira Lopes Airport;DAESP
+São José do Rio Preto;São Paulo;SBSR;SJP;Prof. Eribelto Manoel Reino Airport;DAESP
+São José dos Campos;São Paulo;SBSJ;SJK;Prof. Urbano Ernesto Stumpf Airport;Infraero
+São Paulo;São Paulo;SBMT;MAE;Campo de Marte Airport;Infraero
+São Paulo;São Paulo;SBSP;CGH;Congonhas Airport;Infraero
+São Paulo / Guarulhos;São Paulo;SBGR;GRU;Gov. André Franco Montoro International Airport (Cumbica);Invepar-ACSA
+São Pedro;São Paulo;SDAE;;São Pedro Airport;
+Sorocaba;São Paulo;SDCO;SOD;Bertram Luiz Leupolz Airport;DAESP
+Araguaína;Tocantins;SWGN;AUX;Araguaína Airport;Esaero
+Arraias;Tocantins;SWRA;AAI;Arraias Airport;
+Gurupi;Tocantins;SWGI;GRP;Gurupi Airport;
+Palmas;Tocantins;SBPJ;PMW;Brig. Lysias Rodrigues Airport;Infraero
+Porto Nacional;Tocantins;SBPN;PNB;Porto Nacional Airport;
