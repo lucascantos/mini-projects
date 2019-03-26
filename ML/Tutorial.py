@@ -8,6 +8,7 @@ from sklearn import preprocessing, model_selection, svm
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from matplotlib import style
+import pickle
 
 style.use('ggplot')
 
@@ -46,8 +47,14 @@ y = np.array(df['label'])
 X_train,X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=0.2)
 
 #Aqui começa. Usando Regressao Linear
-clf = LinearRegression()
+clf = LinearRegression(n_jobs=-1)
 clf.fit(X_train, y_train)
+with open('output/linearregression.pickle', 'wb') as f:
+    pickle.dump(clf,f)
+
+pickle_in = open('output/linearregression.pickle', 'rb')
+clf = pickle.load(pickle_in)
+
 #isso é o Erro Quadratico
 accuracy = clf.score(X_test,y_test)
 
