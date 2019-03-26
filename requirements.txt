@@ -3,3 +3,4 @@ pandas
 mathematics
 sklearn
 quandl
+matplotlib

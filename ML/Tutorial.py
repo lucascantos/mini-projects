@@ -2,10 +2,14 @@
 #Regretion 2
 
 import pandas as pd
-import quandl, math
+import quandl, math, datetime
 import numpy as np
 from sklearn import preprocessing, model_selection, svm
 from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+from matplotlib import style
+
+style.use('ggplot')
 
 df = quandl.get('WIKI/GOOGL')
 #Colunas Importantes do Dataframe
@@ -21,6 +25,7 @@ df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
 
 forecast_col = 'Adj. Close'
 df.fillna(-99999, inplace=True)
+#Quanto dias vai ser previsão. 3000 = previsão para os proximos 30 dias
 forecast_out = int(math.ceil(0.01*len(df)))
 print(forecast_out)
 
@@ -28,11 +33,13 @@ print(forecast_out)
 #O Close é como fechou no dia anterior e como abriu no dia. O Label(Aresposta certa) nada mais é do que o Close do dia seguinte(ou o quanto pra frente vc quiser)
 df['label'] = df[forecast_col].shift(-forecast_out)
 
-df.dropna(inplace=True)
 #X = Dados processados, menos o Label. y = label dos dados processados
 X = np.array(df.drop(['label'], 1))
-X_lately = X[-forecast_out]
+X = preprocessing.scale(X)
+X = X[:-forecast_out]
+X_lately = X[-forecast_out:]
 
+df.dropna(inplace=True)
 y = np.array(df['label'])
 
 #Separa X e y de maneira aleatoria em 20%
@@ -44,4 +51,26 @@ clf.fit(X_train, y_train)
 #isso é o Erro Quadratico
 accuracy = clf.score(X_test,y_test)
 
-print(accuracy)
+forecast_set = clf.predict(X_lately)
+print(forecast_set, accuracy, forecast_out)
+
+#preparando pra plotar
+'''
+Pega o ultimo valor, faz um timestamp, adiciona 86400 segundos e soma.  
+'''
+df['Forecast'] = np.nan
+last_date = df.iloc[-1].name
+last_unix = last_date.timestamp()
+one_day = 86400
+next_unix = last_unix + one_day
+
+# Pra cada valor previsto, somar 1 dia,
+for i in forecast_set:
+    next_date = datetime.datetime.fromtimestamp(next_unix)
+    next_unix += one_day
+    df.loc[next_date] = [np.nan for _ in range(len(df.columns)-1)] + [i]
+df['Adj. Close'].plot()
+df['Forecast'].plot()
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.show()
