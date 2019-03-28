@@ -20,6 +20,7 @@ df = df[['Adj. Open', 'Adj. High', 'Adj. Low', 'Adj. Close', 'Adj. Volume']]
 df['HL_PCT'] = (df['Adj. High'] - df['Adj. Close']) / df['Adj. Close'] * 100
 df['PCT_change'] = (df['Adj. Close'] - df['Adj. Open']) / df['Adj. Open'] * 100
 
+
 #Features do Negocio
 df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
 
@@ -27,7 +28,7 @@ df = df[['Adj. Close', 'HL_PCT', 'PCT_change', 'Adj. Volume']]
 forecast_col = 'Adj. Close'
 df.fillna(-99999, inplace=True)
 #Quanto dias vai ser previsão. 3000 = previsão para os proximos 30 dias
-forecast_out = int(math.ceil(0.01*len(df)))
+forecast_out = int(math.ceil(0.1*len(df)))
 print(forecast_out)
 
 #Labels. Shift = move o conjunto de dados para cima(Negativamente)
@@ -37,8 +38,8 @@ df['label'] = df[forecast_col].shift(-forecast_out)
 #X = Dados processados, menos o Label. y = label dos dados processados
 X = np.array(df.drop(['label'], 1))
 X = preprocessing.scale(X)
-X = X[:-forecast_out]
 X_lately = X[-forecast_out:]
+X = X[:-forecast_out]
 
 df.dropna(inplace=True)
 y = np.array(df['label'])
