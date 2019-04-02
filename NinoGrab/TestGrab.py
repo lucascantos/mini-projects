@@ -12,15 +12,15 @@ class Dataframe(object):
                 self.df_raw = pd.read_csv(self.url, index_col=0)
             else:
                 self.df_raw = pd.read_csv(self.url, delim_whitespace=True, header=0)
-
-            #self.df_raw.to_csv('./ninos_data/' + arquivo, sep='\t')
-            print('Sucesso!')
-            #return df
-
+            print('Arquivo existe!')
         except:
             print('Arquivo nao encontrado: {}'.format(url))
             print('Acesse o link pra testar')
-            #return False
+
+    @staticmethod
+    def save_file(df, filename='output.csv'):
+        df.to_csv('./ninos_data/{}'.format(filename))
+
 
     def cria_dataframe(self, column_names,*,transpose=False):
         if transpose:
@@ -70,7 +70,7 @@ df_observado.cria_dataframe(columns_observado)
 df_observado.cria_index(ini, fim)
 
 # --- Previsão ---
-monthly = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/monthly/', '00_indices_month_']
+monthly = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/monthly/', '00_indices_month_', './ninos_data/mensal.csv']
 arquivo = anoA + mesA + diaA + monthly[1] + ano + mes + '_' + anoD + mesD + '.csv'
 caminho_mensal = monthly[0] + arquivo
 columns_mensal = {'NINO1+2': 'ANOM12', 'NINO3': 'ANOM3', 'NINO4': 'ANOM4', 'NINO3.4': 'ANOM34'}
@@ -78,10 +78,12 @@ range = {'ini': ano + mes, 'fim': anoD + mesD}
 
 df_previsto = Dataframe(caminho_mensal)
 df_previsto.download_database()
+Dataframe.save_file(df_previsto.df_raw, arquivo)
 df_previsto.cria_dataframe(columns_mensal, transpose=True)
 df_previsto.cria_index(range['ini'], range['fim'])
 
 merged = pd.concat([df_observado.df,df_previsto.df], sort=True)
+Dataframe.save_file(merged, 'mensal.csv')
 
 # ----------------------------------------------------
 # --------------------------Season--------------------
@@ -96,7 +98,7 @@ mes9 = str(meses10.strftime('%m'))
 dia9 = str(meses10.strftime('%d'))
 ano9 = str(meses10.year)
 
-seasonal = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/seasonal/', '00_indices_season_']
+seasonal = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/seasonal/', '00_indices_season_', './ninos_data/seasonal.csv']
 arquivo2 = anoA + mesA + diaA + seasonal[1] + ano + mes + '_' + anoD + mesD + '.csv'
 caminho_season = seasonal[0] + arquivo2
 
@@ -105,4 +107,5 @@ season_label = {1: 'DJF', 2: 'JFM', 3: 'FMA', 4: 'MAM', 5: 'AMJ', 6: 'MJJ', 7: '
 
 df_sasonal = Dataframe(caminho_season)
 df_sasonal.download_database()
+df_sasonal.save_file(df_sasonal.df_raw, arquivo2)
 df_sasonal.cria_dataframe(columns_season, transpose=True)
