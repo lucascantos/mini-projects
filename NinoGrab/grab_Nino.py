@@ -1,8 +1,34 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
-
 from pandas.tseries.offsets import MonthEnd
+
+
+def download_database(url,*,save=False):
+    try:
+        df = pd.read_csv(url, index_col=0)
+        if save:
+            df.to_csv('./ninos_data/' + arquivo, sep='\t')
+        print('Sucesso!')
+        return df
+
+    except:
+        print('Arquivo nao encontrado: {}'.format(url))
+        print('Acesse o link pra testar')
+        return False
+
+
+def dataframe(df, column_names,*,transpose=False):
+    if transpose:
+        df_T = df.T
+    df_T.columns = map(str.upper, df_T.columns)
+    df_T.rename(columns=column_names, inplace=True)
+    return df_T
+
+def cria_index(inicio, fim, df):
+    lista_data = pd.date_range(start=inicio + '01', end=fim + '01', freq='MS')
+    obs_prev.index = (pd.to_datetime(lista_data))
+
 
 grafico = {
     'Ninos': ['Nino1+2', 'Nino3', 'Nino4', 'Nino3.4'],
@@ -20,7 +46,6 @@ dia = str(hoje.strftime('%d'))
 ano = str(hoje.year)
 
 mes_passado = (pd.to_datetime('today') - pd.DateOffset(months=1)) + MonthEnd(1)
-print('Usando a data de hoje: {}'.format(mes_passado))
 mesA = str(mes_passado.strftime('%m'))
 diaA = str(mes_passado.strftime('%d'))
 anoA = str(mes_passado.year)
