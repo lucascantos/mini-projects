@@ -46,8 +46,8 @@ class Supert_Vector_Machine:
             # we ca do this because convex
             optimized = False
             while not optimized:
-                for b in np.arange()
-                pass
+                for b in np.arange():
+                    pass
 
 
     def predict(self, features):
