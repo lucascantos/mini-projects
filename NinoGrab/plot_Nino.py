@@ -154,7 +154,6 @@ df = pd.read_csv(arquivo, index_col=0)
 
 # Ta no mesmo script pq tem coisas como datas sendo reutilizadas. Mas so isso msm
 print('Graficos trimestrais')
-print(df)
 for i in range(0, 4, 1):
     nino = grafico['Ninos'][i]
     anom = grafico['Anoms'][i]
