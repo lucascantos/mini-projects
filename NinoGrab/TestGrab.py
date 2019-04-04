@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pandas.tseries.offsets import MonthEnd
 
+
 class Dataframe(object):
     def __init__(self, url):
         self.url = url
@@ -14,13 +15,12 @@ class Dataframe(object):
                 self.df_raw = pd.read_csv(self.url, delim_whitespace=True, header=0)
             print('Arquivo existe!')
         except:
-            print('Arquivo nao encontrado: {}'.format(url))
+            print('Arquivo nao encontrado: {}'.format(self.url))
             print('Acesse o link pra testar')
 
     @staticmethod
     def save_file(df, filename='output.csv'):
         df.to_csv('./ninos_data/{}'.format(filename))
-
 
     def cria_dataframe(self, column_names,*,transpose=False):
         if transpose:
@@ -30,9 +30,53 @@ class Dataframe(object):
         self.df.columns = map(str.upper, self.df.columns)
         self.df.rename(columns=column_names, inplace=True)
 
-    def cria_index(self, inicio, fim):
-        lista_data = pd.date_range(start=inicio + '01', end=fim + '01', freq='MS')
-        self.df.index = (pd.to_datetime(lista_data))
+    def cria_index(self, inicio, fim,*, df_indexed=None):
+        self.lista_data = pd.date_range(start=inicio + '01', end=fim + '01', freq='MS')
+        if df_indexed is None:
+            df_indexed = self.df
+        else:
+            self.lista_data = self.lista_data[1:]
+            self.season_labels()
+        df_indexed.index = (pd.to_datetime(self.lista_data))
+        df_indexed.dropna(inplace=True)
+
+
+    def media_sasonal(self, labels):
+        self.df_season = pd.DataFrame()
+        for i in range(0, 4, 1):
+            anom = labels['Anoms'][i]
+
+            # --Faz media entre tres dados para cada mes, adiciona 2 vazios e agrega
+            df_mean = []
+            for i in range(1, len(self.df_raw) - 1, 1):
+                media = self.df_raw[anom][i - 1: i + 2]
+                df_mean.append(media.mean())
+            df_mean.append(np.nan)
+            df_mean.append(np.nan)
+            # --Armazena essa media em um novo Dataframe
+            self.df_season[anom] = df_mean
+
+    def season_labels(self):
+        # --Converte a lista em Dataframe, adiciona index, e uma coluna com o label trimestral
+
+        season_label = {1: 'DJF',
+                        2: 'JFM',
+                        3: 'FMA',
+                        4: 'MAM',
+                        5: 'AMJ',
+                        6: 'MJJ',
+                        7: 'JJA',
+                        8: 'JAS',
+                        9: 'ASO',
+                        10: 'SON',
+                        11: 'OND',
+                        12: 'NDJ'}
+        lista_meses = self.lista_data.month
+        self.df_season['meses'] = lista_meses
+        self.df_season['meses'] = self.df_season['meses'].apply(lambda x: season_label[x])
+        #self.df_mean = df_obs_mean.dropna()
+        #df_T = df_T.drop(columns=anom)
+
 
 # --------------------------Mensal--------------------
 # -Pega datas pra puxar arquivo do site. Data do mes passado, Hoje e data daqui a 12 meses
@@ -74,15 +118,16 @@ monthly = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/monthl
 arquivo = anoA + mesA + diaA + monthly[1] + ano + mes + '_' + anoD + mesD + '.csv'
 caminho_mensal = monthly[0] + arquivo
 columns_mensal = {'NINO1+2': 'ANOM12', 'NINO3': 'ANOM3', 'NINO4': 'ANOM4', 'NINO3.4': 'ANOM34'}
-range = {'ini': ano + mes, 'fim': anoD + mesD}
+inifim = {'ini': ano + mes, 'fim': anoD + mesD}
 
 df_previsto = Dataframe(caminho_mensal)
 df_previsto.download_database()
 Dataframe.save_file(df_previsto.df_raw, arquivo)
 df_previsto.cria_dataframe(columns_mensal, transpose=True)
-df_previsto.cria_index(range['ini'], range['fim'])
+df_previsto.cria_index(inifim['ini'], inifim['fim'])
 
 merged = pd.concat([df_observado.df,df_previsto.df], sort=True)
+
 Dataframe.save_file(merged, 'mensal.csv')
 
 # ----------------------------------------------------
@@ -93,19 +138,35 @@ mes1 = str(mes_quevem.strftime('%m'))
 dia1 = str(mes_quevem.strftime('%d'))
 ano1 = str(mes_quevem.year)
 
-meses10 = (mes_quevem + pd.DateOffset(months=9)) + MonthEnd(1)
-mes9 = str(meses10.strftime('%m'))
-dia9 = str(meses10.strftime('%d'))
-ano9 = str(meses10.year)
+meses9 = (mes_quevem + pd.DateOffset(months=8)) + MonthEnd(1)
+mes9 = str(meses9.strftime('%m'))
+dia9 = str(meses9.strftime('%d'))
+ano9 = str(meses9.year)
 
 seasonal = ['http://dd.weather.gc.ca/ensemble/cansips/csv/indices/forecast/seasonal/', '00_indices_season_', './ninos_data/seasonal.csv']
 arquivo2 = anoA + mesA + diaA + seasonal[1] + ano + mes + '_' + anoD + mesD + '.csv'
 caminho_season = seasonal[0] + arquivo2
 
 columns_season = {'NINO12': 'ANOM12', 'NINO3': 'ANOM3', 'NINO4': 'ANOM4', 'NINO3.4': 'ANOM34'}
-season_label = {1: 'DJF', 2: 'JFM', 3: 'FMA', 4: 'MAM', 5: 'AMJ', 6: 'MJJ', 7: 'JJA', 8: 'JAS', 9: 'ASO', 10: 'SON', 11: 'OND', 12: 'NDJ'}
 
 df_sasonal = Dataframe(caminho_season)
 df_sasonal.download_database()
 df_sasonal.save_file(df_sasonal.df_raw, arquivo2)
 df_sasonal.cria_dataframe(columns_season, transpose=True)
+df_sasonal.df['meses'] = df_sasonal.df.index
+
+df_sasonal.cria_index(ano1 + mes1, ano9 + mes9)
+
+# --- Observado
+
+grafico = {
+    'Ninos': ['Nino1+2', 'Nino3', 'Nino4', 'Nino3.4'],
+    'Anoms': ['ANOM12', 'ANOM3', 'ANOM4', 'ANOM34']
+}
+fim2 = ano + mes
+df_observado.media_sasonal(grafico)
+df_observado.cria_index(ini, fim2, df_indexed=df_observado.df_season)
+
+merged_sasonal = pd.concat([df_observado.df_season, df_sasonal.df], sort=True)
+
+Dataframe.save_file(merged_sasonal, 'sasonal.csv')

@@ -53,9 +53,11 @@ data_fim = pd.to_datetime(str(ano_fim) + '-' + str(mes_fim))
 try:
     arquivo = './Nino/ninos_data/mensal.csv'
     df = pd.read_csv(arquivo, index_col=0)
+    caminho_padrao = './Nino/ninos_images'
 except:
     arquivo = './ninos_data/mensal.csv'
     df = pd.read_csv(arquivo, index_col=0)
+    caminho_padrao = './ninos_images'
 
 print('Graficos mensais')
 for i in range(0, 4, 1):
@@ -88,8 +90,8 @@ for i in range(0, 4, 1):
 
     plt.axhspan(0.5, L, facecolor='r', alpha=0.4)
     plt.axhspan(-0.5, -1 * L, facecolor='b', alpha=0.4)
-    fig.savefig('./Nino/ninos_images/indices_month_' + ano + mes + '_' + anoD + mesD + '_' + nino + '.png')
-    fig.savefig('./Nino/ninos_images/intranet/indices_month_' + nino + '.png')
+    fig.savefig(caminho_padrao+'/indices_month_' + ano + mes + '_' + anoD + mesD + '_' + nino + '.png')
+    fig.savefig(caminho_padrao+'/intranet/indices_month_' + nino + '.png')
 
 # -Loop de print. Todos juntos
 fig, ax = plt.subplots(figsize=(10.80, 6.00), dpi=100)
@@ -133,8 +135,8 @@ plt.grid(True)
 
 plt.axhspan(0.5, L, facecolor='r', alpha=0.4)
 plt.axhspan(-0.5, -1 * L, facecolor='b', alpha=0.4)
-fig.savefig('./Nino/ninos_images/indices_month_' + ano + mes + '_' + anoD + mesD + '_all.png')
-fig.savefig('./Nino/ninos_images/intranet/indices_month_all.png')
+fig.savefig(caminho_padrao+'/indices_month_' + ano + mes + '_' + anoD + mesD + '_all.png')
+fig.savefig(caminho_padrao+'/intranet/indices_month_all.png')
 
 # ----------------------------------------------------
 # --------------------------Season--------------------
@@ -142,17 +144,21 @@ fig.savefig('./Nino/ninos_images/intranet/indices_month_all.png')
 try:
     arquivo = './Nino/ninos_data/sasonal.csv'
     df = pd.read_csv(arquivo, index_col=0)
+    caminho_padrao = './Nino/ninos_images'
 except:
     arquivo = './ninos_data/sasonal.csv'
     df = pd.read_csv(arquivo, index_col=0)
+    caminho_padrao = './ninos_images'
 
 df = pd.read_csv(arquivo, index_col=0)
 
 # Ta no mesmo script pq tem coisas como datas sendo reutilizadas. Mas so isso msm
 print('Graficos trimestrais')
+print(df)
 for i in range(0, 4, 1):
     nino = grafico['Ninos'][i]
     anom = grafico['Anoms'][i]
+
     print(anom, nino)
     subset = df[[anom, 'meses']][str(data_ini):str(data_fim)]
     if subset[anom].max() > 2:
@@ -176,8 +182,8 @@ for i in range(0, 4, 1):
 
     plt.axhspan(0.5, L, facecolor='r', alpha=0.4)
     plt.axhspan(-0.5, -1 * L, facecolor='b', alpha=0.4)
-    fig2.savefig('./Nino/ninos_images/indices_season_' + ano + mes + '_' + anoD + mesD + '_' + nino + '.png')
-    fig2.savefig('./Nino/ninos_images/intranet/indices_season_' + nino + '.png')
+    fig2.savefig(caminho_padrao+'/indices_season_' + ano + mes + '_' + anoD + mesD + '_' + nino + '.png')
+    fig2.savefig(caminho_padrao+'/intranet/indices_season_' + nino + '.png')
 
 # -Loop de print. Todos juntos
 fig, ax = plt.subplots(figsize=(10.80, 6.00), dpi=100)
@@ -214,8 +220,8 @@ plt.ylabel('Anomalia de temp (C)')
 plt.grid(True)
 plt.axhspan(0.5, L, facecolor='r', alpha=0.4)
 plt.axhspan(-0.5, -1 * L, facecolor='b', alpha=0.4)
-fig.savefig('./Nino/ninos_images/indices_season_' + ano + mes + '_' + anoD + mesD + '_all.png')
-fig.savefig('./Nino/ninos_images/intranet/indices_season_all.png')
+fig.savefig(caminho_padrao+'/indices_season_' + ano + mes + '_' + anoD + mesD + '_all.png')
+fig.savefig(caminho_padrao+'/intranet/indices_season_all.png')
 
 # scp *png operacao@somar1.dc.met.com.br:/p1/operacao/produtos/ENSO
 # https://stackoverflow.com/questions/42684530/convert-a-column-in-a-python-pandas-from-string-month-into-int

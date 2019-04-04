@@ -77,7 +77,6 @@ dia1 = str(mes_quevem.strftime('%d'))
 ano1 = str(mes_quevem.year)
 
 meses10 = (mes_quevem + pd.DateOffset(months=9)) + MonthEnd(1)
-print(meses10)
 mes9 = str(meses10.strftime('%m'))
 dia9 = str(meses10.strftime('%d'))
 ano9 = str(meses10.year)
@@ -109,7 +108,7 @@ fim2 = ano9 + mes9
 lista_data2 = pd.date_range(start=inicio2 + '01', end=fim2 + '01', freq='MS')
 lista_meses = lista_data2.month
 df_final = pd.DataFrame()
-print(inicio2, fim2)
+print("Yeet", inicio2, fim2)
 for i in range(0, 4, 1):
     nino = grafico['Ninos'][i]
     anom = grafico['Anoms'][i]
