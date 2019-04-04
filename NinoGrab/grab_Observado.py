@@ -28,3 +28,4 @@ def grab_observado():
     fim2 = const.ano + const.mes
     df_observado.media_sasonal(grafico)
     df_observado.cria_index(ini, fim2, df_indexed=df_observado.df_season)
+    return df_observado

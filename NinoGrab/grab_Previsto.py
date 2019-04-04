@@ -21,7 +21,7 @@ def grab_mensal():
     ndf.save_file(df_previsto.df_raw, arquivo1)
     df_previsto.cria_dataframe(columns_mensal, transpose=True)
     df_previsto.cria_index(const.ano + const.mes, const.anoD + const.mesD)
-
+    return df_previsto
     #merged = pd.concat([df_observado.df,df_previsto.df], sort=True)
     #ndf.save_file(merged, 'mensal.csv')
 
@@ -44,6 +44,8 @@ def grab_sasonal():
     df_sasonal.df['meses'] = df_sasonal.df.index
 
     df_sasonal.cria_index(const.ano1 + const.mes1, const.ano9 + const.mes9)
+
+    return df_sasonal
 
 
     #merged_sasonal = pd.concat([df_observado.df_season, df_sasonal.df], sort=True)
