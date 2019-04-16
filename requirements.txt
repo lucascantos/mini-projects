@@ -4,3 +4,7 @@ mathematics
 sklearn
 quandl
 matplotlib
+
+netCDF4
+
+Cartopy
