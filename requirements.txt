@@ -8,3 +8,6 @@ matplotlib
 netCDF4
 
 Cartopy
+
+request
+python-oauth2
