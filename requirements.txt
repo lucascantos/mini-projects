@@ -8,3 +8,6 @@ matplotlib
 netCDF4
 
 Cartopy
+
+GoogleNews
+bs4
