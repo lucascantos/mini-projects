@@ -6,7 +6,6 @@ import pandas as pd
 observado = go.grab_observado()
 mensal = gp.grab_mensal()
 sasonal = gp.grab_sasonal()
-print(mensal)
 
 merged1 = pd.concat([observado.df,mensal.df], sort=True)
 ndf.save_file(merged1, 'mensal.csv')
