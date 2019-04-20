@@ -38,18 +38,27 @@ search_headers = {
     'Authorization': 'Bearer {}'.format(access_token)    
 }
 
+contas = ['defesacivilsp']
+keywords = ['campinas', 'capital', 'campos']
+
 search_params = {
-    'q': 'campinas OR capital',
+    'q': 'campinas OR capital from:defesacivilsp',
+    'count': '5',
+}
+
+statuses_params = {
     'screen_name': 'defesacivilsp',
-    'result_type': 'recent',
-    'count': 20
+    'count': 150,
 }
 
 search_url = '{}1.1/search/tweets.json'.format(base_url)
+statuses_url = '{}1.1/statuses/user_timeline.json'.format(base_url)
 
-search_resp = requests.get(search_url, headers=search_headers, params=search_params)
+#search_resp = requests.get(search_url, headers=search_headers, params=search_params) #https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets.html
+statuses_resp = requests.get(statuses_url, headers=search_headers, params=statuses_params) #https://developer.twitter.com/en/docs/tweets/timelines/api-reference/get-statuses-user_timeline.html
 
-tweet_data = search_resp.json()
 
-for x in tweet_data['statuses']:
-    print(x['text']+ '\n')
+tweet_data = statuses_resp.json()
+
+print(len(tweet_data))
+
