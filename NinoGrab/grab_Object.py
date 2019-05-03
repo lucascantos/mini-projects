@@ -35,7 +35,7 @@ class NinoDataframe(object):
         if df_indexed is None:
             df_indexed = self.df
         else:
-            self.lista_data = self.lista_data[1:]
+            #self.lista_data = self.lista_data[1:]
             self.season_labels()
         df_indexed.index = (pd.to_datetime(self.lista_data))
         df_indexed.dropna(inplace=True)
@@ -48,14 +48,19 @@ class NinoDataframe(object):
 
             # --Faz media entre tres dados para cada mes, adiciona 2 vazios e agrega
             df_mean = []
-            for i in range(1, len(self.df_raw) - 1, 1):
-                media = self.df_raw[anom][i - 1: i + 2]
-                df_mean.append(media.mean())
-            df_mean.append(np.nan)
-            df_mean.append(np.nan)
+            for i in range(0, len(self.df_raw), 1):
+                try:
+                    media = self.df_raw[anom][i - 1: i + 2]
+                    if len(media)==3:
+                        df_mean.append(media.mean())
+                    else:
+                        print('Boas')
+                        df_mean.append(np.nan)
+                except:
+                    df_mean.append(np.nan)
             # --Armazena essa media em um novo Dataframe
             self.df_season[anom] = df_mean
-
+        print(len(df_mean))
     def season_labels(self):
         # --Converte a lista em Dataframe, adiciona index, e uma coluna com o label trimestral
 

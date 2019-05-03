@@ -25,7 +25,8 @@ def grab_observado():
         'Ninos': ['Nino1+2', 'Nino3', 'Nino4', 'Nino3.4'],
         'Anoms': ['ANOM12', 'ANOM3', 'ANOM4', 'ANOM34']
     }
-    fim2 = const.ano + const.mes
     df_observado.media_sasonal(grafico)
-    df_observado.cria_index(ini, fim2, df_indexed=df_observado.df_season)
+    print(df_observado.df_raw.tail())
+    df_observado.cria_index(ini, fim, df_indexed=df_observado.df_season)
+    print(df_observado.df_season)
     return df_observado
