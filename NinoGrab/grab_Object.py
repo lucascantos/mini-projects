@@ -54,7 +54,6 @@ class NinoDataframe(object):
                     if len(media)==3:
                         df_mean.append(media.mean())
                     else:
-                        print('Boas')
                         df_mean.append(np.nan)
                 except:
                     df_mean.append(np.nan)
