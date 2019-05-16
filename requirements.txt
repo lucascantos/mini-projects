@@ -14,5 +14,5 @@ python-oauth2
 
 gspread
 oauth2client
-apiclient
+googleapiclient
 httplib2
