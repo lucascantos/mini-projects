@@ -6,7 +6,7 @@ from oauth2client.file import Storage
 
 def api_key():
     # on build, use developerKey = 
-    key = 'AIzaSyC81Oi0aby8CIzSfdJJ3UWH2Gn4PbHYt3U '
+    key = ''
     return key
 
 def client_credenciais ():

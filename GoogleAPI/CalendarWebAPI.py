@@ -34,8 +34,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
   # credentials. For this example, the client ID and secret are command-line
   # arguments.
 
-  client_id = '221662732366-mmu1mcclqfhooe44sekc7qcul8f8kj57.apps.googleusercontent.com'
-  client_secret = '9ljSVSDZ7a1E9fgB6NMSZ1Hp'
+  client_id = ''
+  client_secret = ''
   flow = OAuth2WebServerFlow(client_id,
                              client_secret,
                              'https://www.googleapis.com/auth/calendar',

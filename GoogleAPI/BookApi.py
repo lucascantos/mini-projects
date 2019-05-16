@@ -19,7 +19,7 @@ import sys
 from apiclient.discovery import build
 
 # For this example, the API key is provided as a command-line argument.
-api_key = 'kl12j3l1j2l3kj12l3kj1l2k3j1l2k3j'
+api_key = ''
 
 # The apiclient.discovery.build() function returns an instance of an API service
 # object that can be used to make API calls. The object is constructed with
