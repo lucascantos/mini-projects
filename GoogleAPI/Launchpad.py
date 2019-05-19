@@ -5,6 +5,8 @@ from oauth2client.file import Storage
 
 def discovery_google():
         start = 'https://developers.google.com/api-client-library/python/'
+        # pip install --upgrade google-api-python-client
+        # pip install oauth2client
         hue = 'https://developers.google.com/apis-explorer/#p/discovery/v1/discovery.apis.getRest'
 
 def api_key():
@@ -12,7 +14,7 @@ def api_key():
         key = ''
         return key
 
-def client_credenciais ():
+def client_credenciais():
         # on build, use http = 
         scopes = [
                 'https://www.googleapis.com/auth/spreadsheets',
@@ -64,4 +66,23 @@ def sheets_google():
 
 
 def slides_google():
-        pass
+    slide = 'MeuSlide'
+    logo_file = 'Imagens/logo.jpg'
+    drive_service = build('drive', 'v3', http=client_credenciais())
+    slides_service = build('slides', 'v1', http=client_credenciais())
+
+    template_slide = drive_service.files().list(q = "name='%s'" % slide).execute()['files'][0]
+    data = {'name': 'Google Slides API DEMO'}
+    deck_file = drive_service.files().copy(body=data, fileId['id']).execute()['id']
+
+    slides = slides_service.presentations().get(presentationsId = deck_file, fields = 'slides').execute().get('slides', [])[0]
+    obj = None
+    for obj in slide['pageElements']:
+            if obj['shape']['shapeType'] == 'RECTANGLE':
+                    break
+
+        
+
+    
+
+slides_google()
