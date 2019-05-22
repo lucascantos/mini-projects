@@ -2,6 +2,7 @@ from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import client, tools
 from oauth2client.file import Storage
+from pprint import pprint
 
 class GoogleSlide(object):
     def __init__(self, client_secret_file, template_id):
@@ -46,18 +47,32 @@ class GoogleSlide(object):
             # Deleta slides antigos com o mesmo nome só pra não explodir meu driver
             self.drive_services.files().delete(fileId=old_slide['id']).execute()
         self.new_presentation = self.drive_services.files().copy(body={'name': 'Teste01'}, fileId = self.template_id).execute()
+    
+    def push_change(self):
+        self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
 
     def grab_template_element(self, object_name):
-        '''
-        Busca o elemento dentro dos templates e devolve o objeto
-        '''
-        self.slide = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])[0]
-        self.obj = None
-        for self.obj in self.slide['pageElements']:
-            text = self.obj['shape']['text']['textElements'][1]['textRun']['content'][:-1]
-            if text == object_name:
-                break
+        def wrapper():
+                
+            '''
+            Busca o elemento dentro dos templates e devolve o objeto
+            '''
+            self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
+            self.obj = None            
+            for self.slide in self.slides:
+                for self.obj in self.slide['pageElements']:
+                    text = self.obj['shape']['text']['textElements'][1]['textRun']['content'][:-1]
+                    if text == object_name:
+                        func()
 
+    def grab_image(self, img_file_name):
+        # cria um link com acesso ao logo de imagem que vc quer
+        template_file = self.drive_services.files().list(q = "name='{}'".format(img_file_name)).execute()['files'][0]
+        id_uri = self.drive_services.files().get_media(fileId=template_file['id']).uri
+        credz_token = self.credz.access_token
+        return ('{}&access_token={}'.format(id_uri, credz_token))
+
+    @grab_template_element
     def new_image(self, img_file, slide_obj):
         '''
         cria uma nova imagem no lugar de um objeto em especifico
@@ -67,9 +82,10 @@ class GoogleSlide(object):
         '''
 
         self.grab_template_element(slide_obj)
+        img_url = self.grab_image(img_file)
 
         new_image = {'createImage': {
-                        'url': img_file,
+                        'url': img_url,
                         'elementProperties': {
                             'pageObjectId': self.slide['objectId'],
                             'size': self.obj['size'],
@@ -80,29 +96,36 @@ class GoogleSlide(object):
 
         self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
 
-    def new_text(self, text, slide_obj)
+    def new_text(self, text, slide_obj):
         '''
         Substitui todos os textos com aquele ID no texto.
         '''
-        new_text = {'replaceAllText': {'replaceText': slide_obj, 'containsText': {'text': text}}}
+        new_text =  {'replaceAllText': {'replaceText': text, 'containsText': {'text': slide_obj}}}
         self.reqs.append(new_text)
 
 # Caminho pros arquivos de autencticação
-client_path = 'GoogleAPI/credentials/client_secret.json'
-service_path = './credentials/service_key.json'
-template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
 
-logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
-title = {'newTxt': '>Titulo', 'placeholder': '{{TITLE}}'}
 
-# Cria Conexão  com o Google
-meuslide = GoogleSlide(client_path, template_id)
-meuslide.client_credenciais()
+def routine():        
+    client_path = 'GoogleAPI/credentials/client_secret.json'
+    service_path = './credentials/service_key.json'
+    template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
 
-# Monta a ordem dos objetos a serem substituidos a partir de um template
-meuslide.new_image(logo['file'], logo['placeholder'])
-meuslide.new_text(title['newTxt'], title['placeholder'])
+    logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
+    title = {'newTxt': '>Titulo', 'placeholder': '{{TITLE}}'}
 
-# Faz uma copia do template e substitui os items 
-meuslide.clone_presentation()
+    # Cria Conexão  com o Google e copia um template
+    meuslide = GoogleSlide(client_path, template_id)
+    meuslide.client_credenciais()
+    meuslide.clone_presentation()
+
+    # Monta a ordem dos objetos a serem substituidos a partir de um template
+    meuslide.new_image(logo['file'], logo['placeholder'])
+    meuslide.new_text(title['newTxt'], title['placeholder'])
+    pprint(meuslide.reqs)
+    # Substitui os items
+    meuslide.push_change()
+    print('yeet')
+
+routine()
 

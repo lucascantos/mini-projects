@@ -85,7 +85,7 @@ class GoogleSlide(object):
                 # Cria serviços das APIS
                 drive_service = build('drive', 'v3', http=self.credz.authorize(Http()))
                 slides_service = build('slides', 'v1', http=self.credz.authorize(Http()))
-
+                '''
                 # Deleta slide pra evitar encher de lixo
                 file_id = drive_service.files().list(q = "name='{}'".format('Google Slides API DEMO')).execute()['files'][0]['id']
                 drive_service.files().delete(fileId=file_id).execute()
@@ -93,13 +93,15 @@ class GoogleSlide(object):
                 template_file = drive_service.files().list(q = "name='{}'".format(slide)).execute()['files'][0]
                 data = {'name': 'Google Slides API DEMO'}
                 deck_file = drive_service.files().copy(body=data, fileId=template_file['id']).execute()['id']
-
+                '''
                 # Pega apenas o primeiro slide.
-                slides = slides_service.presentations().get(presentationId = deck_file, fields = 'slides').execute().get('slides', [])[0]
+                
+                file_id = drive_service.files().list(q = "name='{}'".format('BaseTemplate')).execute()['files'][0]['id']
+                slides = slides_service.presentations().get(presentationId = file_id, fields = 'slides').execute().get('slides', [])
                 obj = None
-                for obj in slides['pageElements']:
-                        if obj['shape']['shapeType'] == 'RECTANGLE':
-                                break
+                for obj in slides:
+                        pprint(obj)
+                        input()
                 
                
 
