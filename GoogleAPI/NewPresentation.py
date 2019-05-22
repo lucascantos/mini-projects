@@ -51,19 +51,21 @@ class GoogleSlide(object):
     def push_change(self):
         self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
 
+    
     def grab_template_element(self, object_name):
-        def wrapper():
-                
-            '''
-            Busca o elemento dentro dos templates e devolve o objeto
-            '''
-            self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
-            self.obj = None            
-            for self.slide in self.slides:
-                for self.obj in self.slide['pageElements']:
+        '''
+        Busca o elemento dentro dos templates e devolve o objeto
+        '''
+        self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
+        self.obj = None
+        for self.slide in self.slides:
+            for self.obj in self.slide['pageElements']:
+                try:
                     text = self.obj['shape']['text']['textElements'][1]['textRun']['content'][:-1]
                     if text == object_name:
-                        func()
+                        yield
+                except:
+                    pass
 
     def grab_image(self, img_file_name):
         # cria um link com acesso ao logo de imagem que vc quer
@@ -72,7 +74,7 @@ class GoogleSlide(object):
         credz_token = self.credz.access_token
         return ('{}&access_token={}'.format(id_uri, credz_token))
 
-    @grab_template_element
+
     def new_image(self, img_file, slide_obj):
         '''
         cria uma nova imagem no lugar de um objeto em especifico
@@ -81,20 +83,18 @@ class GoogleSlide(object):
         slide_obj: Objeto dentro do template que vai ser substitudo pela imagem
         '''
 
-        self.grab_template_element(slide_obj)
         img_url = self.grab_image(img_file)
-
-        new_image = {'createImage': {
-                        'url': img_url,
-                        'elementProperties': {
-                            'pageObjectId': self.slide['objectId'],
-                            'size': self.obj['size'],
-                            'transform': self.obj['transform'],
-                        }
-                    }}      
-        self.reqs.append(new_image)
-
-        self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
+        for element in self.grab_template_element(slide_obj):
+            new_image = {'createImage': {
+                            'url': img_url,
+                            'elementProperties': {
+                                'pageObjectId': self.slide['objectId'],
+                                'size': self.obj['size'],
+                                'transform': self.obj['transform'],
+                            }
+                        }}
+            self.reqs.append(new_image)
+            self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
 
     def new_text(self, text, slide_obj):
         '''
