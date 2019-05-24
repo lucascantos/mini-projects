@@ -30,39 +30,15 @@ class GoogleSlide(object):
         store = Storage('GoogleAPI/credentials/storage.json')
         self.credz = store.get()
         if not self.credz or self.credz.invalid:
-            flow = client.flow_from_clientsecrets(client_path, scopes)
+            flow = client.flow_from_clientsecrets(self.client_secret_file, scopes)
             self.credz = tools.run_flow(flow, store)
 
         # Cria os serviços de Drive e Slides        
         self.drive_services = build('drive', 'v3', http=self.credz.authorize(Http()))
         self.slides_services = build('slides', 'v1', http=self.credz.authorize(Http()))
 
-    def clone_presentation(self):
-        #Cria uma copia do template pra ser alterado
-        old_slide = self.drive_services.files().list(q = 'name="{}"'.format('Teste01')).execute()['files'][0]
-
-        if old_slide:
-            # Deleta slides antigos com o mesmo nome só pra não explodir meu driver
-            self.drive_services.files().delete(fileId=old_slide['id']).execute()
-        self.new_presentation = self.drive_services.files().copy(body={'name': 'Teste01'}, fileId = self.template_id).execute()
-    
     def push_change(self):
         self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
-
-    def grab_template_element(self, object_name):
-        '''
-        Busca o elemento dentro dos templates e devolve o objeto
-        '''
-        self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
-        self.obj = None
-        for self.slide in self.slides:
-            for self.obj in self.slide['pageElements']:
-                try:
-                    text = self.obj['shape']['text']['textElements'][1]['textRun']['content'][:-1]
-                    if text == object_name:
-                        yield
-                except:
-                    pass
 
     def grab_image(self, img_file_name):
         # cria um link com acesso ao logo de imagem que vc quer
@@ -72,7 +48,7 @@ class GoogleSlide(object):
         return ('{}&access_token={}'.format(id_uri, credz_token))
 
 
-    def new_image(self, img_file, slide_obj):
+    def add_image(self, img_file, slide_obj):
         '''
         cria uma nova imagem no lugar de um objeto em especifico
 
@@ -93,35 +69,88 @@ class GoogleSlide(object):
             self.reqs.append(new_image)
             self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
 
-    def new_text(self, text, slide_obj):
+    def add_text(self, text, slide_obj):
         '''
         Substitui todos os textos com aquele ID no texto.
         '''
         new_text =  {'replaceAllText': {'replaceText': text, 'containsText': {'text': slide_obj}}}
         self.reqs.append(new_text)
-    
-    def new_slide(self):
+
+    def grab_template_element(self, object_name):
+        '''
+        METODO 1
+        Busca o elemento dentro dos templates e devolve o objeto
+        '''
+        self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
+        self.obj = None
+        for self.slide in self.slides:
+            for self.obj in self.slide['pageElements']:
+                try:
+                    text = self.obj['shape']['text']['textElements'][1]['textRun']['content'][:-1]
+                    if text == object_name:
+                        yield
+                except:
+                    print('Esse elemento não possui texto!')
+
+    def clone_presentation(self):
+        '''
+        METODO 1
+        Cria uma copia do template pra ser alterado.
+        Valide para o caso de ter um template completo de uma apresentação
+        '''
+        old_slide = self.drive_services.files().list(q = 'name="{}"'.format('Teste01')).execute()['files'][0]
+
+        if old_slide:
+            # Deleta slides antigos com o mesmo nome só pra não explodir meu driver
+            self.drive_services.files().delete(fileId=old_slide['id']).execute()
+        self.new_presentation = self.drive_services.files().copy(body={'name': 'Teste01'}, fileId = self.template_id).execute()
+
+    def create_presentation(self):
+        '''
+        De um arquivo de templates, ele pega apenas um dos slides e copia este para o novo
+        '''
         # Try Abrir novo slides
         # Except Criar novo slides
         try:
-            new_slides = self.drive_services.files().list(q = 'name="{}"'.format('Teste01')).execute()['files'][0]
+            self.new_presentation = self.drive_services.files().list(q = 'name="{}"'.format('Teste01')).execute()['files'][0]
         except:
             body={
                 'title': 'Teste01'
             }
-            news_slides = self.slides_services.presentations().create(body=body).execute()
-
+            self.new_presentation = self.slides_services.presentations().create(body=body).execute()
         # Abrir o template
-        template_file = self.slides_services.presentations().get(presentationId = self.template_id).execute()
-        pprint(template_file)
+        self.template_file = self.slides_services.presentations().get(presentationId = self.template_id).execute()
+        self.slides_labeler()
 
-        # Pegar o slide escolhido
+    def slides_labeler(self):
+        '''
+        cria uma lista com os labels e ids dos slides. 
+        necessario, pois não tem um jeito simples de diferenciar entre os slides
+        imagino que tenha como otimizar isso aki
+        '''
+        self.slide_list=[]
+        for slide in self.template_file['slides']:
+            slide_id = slide['objectId']
+            for element in slide['pageElements']:
+                if element['shape']['shapeType'] == 'ELLIPSE':
+                    slide_label = element['shape']['text']['textElements'][1]['textRun']['content']
+                    self.slide_list.append({'id': slide_id, 'label': slide_label})
+
+    def add_slide(self, slide_label):
+        # pega o slide_label
+        for slide_props in self.slide_list:
+            if slide_props['label']==slide_label:
+                break
         
-        # copiar elementos do slide template pro novo slides
+        # usa o label pra pegar o id
+        for template_slide in self.template_file:
+            pass
 
-        pass
+        # pega slide com aquele id e copia os Elementos
+        # cria um novo slide na nova apresentação com ess lista de elementos
 
     def template_builder(self):
+        pass
         # Abrir referencia
         # pra cada slide LOOP
         # pra cada elemento LOOP
@@ -136,47 +165,4 @@ class GoogleSlide(object):
         # pass
         # SE elemento = tabela
         # pass
-        pass
-
-
-
-
-def routine():
     
-    # Caminho pros arquivos de autencticação     
-    client_path = 'GoogleAPI/credentials/client_secret.json'
-    service_path = './credentials/service_key.json'
-    template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
-
-    logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
-    title = {'newTxt': '>Titulo', 'placeholder': '{{TITLE}}'}
-
-    # Cria Conexão  com o Google e copia um template
-    meuslide = GoogleSlide(client_path, template_id)
-    meuslide.client_credenciais()
-    meuslide.clone_presentation()
-
-    # Monta a ordem dos objetos a serem substituidos a partir de um template
-    meuslide.new_image(logo['file'], logo['placeholder'])
-    meuslide.new_text(title['newTxt'], title['placeholder'])
-    # pprint(meuslide.reqs)
-    # Substitui os items
-    meuslide.push_change()
-    print('yeet')
-
-
-def teste():
-    # Caminho pros arquivos de autencticação     
-    client_path = 'GoogleAPI/credentials/client_secret.json'
-    service_path = './credentials/service_key.json'
-    template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
-
-    logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
-    title = {'newTxt': '>Titulo', 'placeholder': '{{TITLE}}'}
-
-    # Cria Conexão  com o Google e copia um template
-    meuslide = GoogleSlide(client_path, template_id)
-    meuslide.client_credenciais()
-    meuslide.new_slide()
-
-teste()
