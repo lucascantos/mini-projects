@@ -1,7 +1,5 @@
 from GoogleSlides import GoogleSlide
 
-
-
 def routine():
     
     # Caminho pros arquivos de autencticação     
@@ -40,7 +38,10 @@ def teste():
     meuslide.client_credenciais()
     meuslide.create_presentation()
 
-    for k in meuslide.template_file['slides']: print(k['objectId'])
-    for j  in meuslide.slide_list: print(j)
-        
+    meuslide.add_slide('Batatinha')
+    meuslide.push_change()
+
+    '''  for k in meuslide.template_file['slides']: print(k['objectId'])
+    for j  in meuslide.slide_list: print(j)'''
+
 teste()

@@ -4,8 +4,16 @@ from oauth2client import client, tools
 from oauth2client.file import Storage
 from pprint import pprint
 
-class GoogleSlide(object):
+def error_handler(function):
+    def wrapper(*args, **kwargs):
+        try:
+            function(*args, **kwargs)
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
 
+class GoogleSlide(object):
     def __init__(self, client_secret_file, template_id):
         '''
         Cria  uma nova apresentação a partir de um template
@@ -36,7 +44,7 @@ class GoogleSlide(object):
         # Cria os serviços de Drive e Slides        
         self.drive_services = build('drive', 'v3', http=self.credz.authorize(Http()))
         self.slides_services = build('slides', 'v1', http=self.credz.authorize(Http()))
-
+    @error_handler
     def push_change(self):
         self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
 
@@ -46,7 +54,6 @@ class GoogleSlide(object):
         id_uri = self.drive_services.files().get_media(fileId=template_file['id']).uri
         credz_token = self.credz.access_token
         return ('{}&access_token={}'.format(id_uri, credz_token))
-
 
     def add_image(self, img_file, slide_obj):
         '''
@@ -112,12 +119,13 @@ class GoogleSlide(object):
         # Try Abrir novo slides
         # Except Criar novo slides
         try:
-            self.new_presentation = self.drive_services.files().list(q = 'name="{}"'.format('Teste01')).execute()['files'][0]
+            self.new_presentation = self.drive_services.files().list(q = 'name="{}"'.format('Teste02')).execute()['files'][0]
         except:
             body={
-                'title': 'Teste01'
+                'title': 'Teste02'
             }
             self.new_presentation = self.slides_services.presentations().create(body=body).execute()
+     
         # Abrir o template
         self.template_file = self.slides_services.presentations().get(presentationId = self.template_id).execute()
         self.slides_labeler()
@@ -137,18 +145,58 @@ class GoogleSlide(object):
                     self.slide_list.append({'id': slide_id, 'label': slide_label})
 
     def add_slide(self, slide_label):
+        '''
+        Adiciona novo slide à apresentação.
+        slide_label: nome do slide dado no template, dentro de uma eslipse
+        '''
         # pega o slide_label
         for slide_props in self.slide_list:
-            if slide_props['label']==slide_label:
+            if slide_props['label'][:-1]==slide_label:
                 break
-        
+
         # usa o label pra pegar o id
-        for template_slide in self.template_file:
-            pass
-
         # pega slide com aquele id e copia os Elementos
-        # cria um novo slide na nova apresentação com ess lista de elementos
+        for template_slide in self.template_file['slides']:
+            if template_slide['objectId'] == slide_props['id']:
+                slide_elements = template_slide['pageElements']
+                break
 
+        # cria um novo slide na nova apresentação com ess lista de elementos
+        new_slide_request = {
+            'createSlide': {}
+        }
+        self.reqs.append(new_slide_request)
+
+        for slide_element in slide_elements:
+            shape_request, text_request = self.get2create(slide_element, slide_props['id'])
+            self.reqs.append(shape_request)
+            self.reqs.append(text_request)
+
+    def get2create(self, slide_element, slide_id):
+        '''
+        Converte o JSON de get pra um JSON de create.
+        '''
+        
+        create_shape = {'createShape': {
+            'objectId': slide_element['objectId'],
+            'shapeType': slide_element['shape']['shapeType'],
+            'elementProperties': {
+                'pageObjectId': slide_id,
+                'size': slide_element['size'],
+                'transform': slide_element['transform']
+            },
+        }}
+        
+        insert_text = {'insertText': {
+            'objectId': slide_element['objectId'],
+            'text': slide_element['shape']['text']['textElements'][1]['textRun']['content']
+        }}
+        return create_shape, insert_text
+
+    def clear_labels(self):
+        pass
+        
+    @error_handler
     def template_builder(self):
         pass
         # Abrir referencia
@@ -165,4 +213,3 @@ class GoogleSlide(object):
         # pass
         # SE elemento = tabela
         # pass
-    
