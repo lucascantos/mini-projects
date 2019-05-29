@@ -5,3 +5,4 @@ __pycache__
 ReanalysisSandbox/Data/*
 storage.json
 GoogleAPI/credentials/*
+CEMADEN/*.csv
