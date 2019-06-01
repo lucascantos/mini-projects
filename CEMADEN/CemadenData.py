@@ -14,7 +14,7 @@ cidades = [
 ]
 
 # Le arquivo
-df = pd.read_csv('CEMADEN\SP_2019_3.csv', index_col=False, sep=';')
+df = pd.read_csv('CEMADEN/SP_2019_3.csv', index_col=False, sep=';')
 
 # Converte em Timeseries
 df['datahora'] = pd.to_datetime(df['datahora'])
