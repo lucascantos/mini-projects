@@ -1,0 +1,62 @@
+<html>
+    <body>
+        <div>
+            Hello
+        </div>
+        <input placeholder="Digite o valor">
+        <button onclick="async_request">
+            Yeet
+        </button>
+        <script>
+            var megajson
+            
+            const Url = 'https://broker.negociecoins.com.br/api/v3/btcbrl/ticker'            
+            const url2 = 'https://broker.tembtc.com.br/api/v3/btcbrl/ticker'
+
+
+            // fetch (url2)
+            // .then(data=>{
+            //     console.log(data);
+            //     return data.json();
+            //     })
+            // .then(res=>{
+            //     console.log(res);
+            //     megajson = res;
+            //     console.log(megajson);
+            //     })
+
+
+            
+            const async_request = async() => {
+                const url1 = 'https://broker.negociecoins.com.br/api/v3/btcbrl/ticker';            
+                const url2 = 'https://broker.tembtc.com.br/api/v3/btcbrl/ticker';
+
+                
+                var response = await fetch(url1);
+                const nbc = await response.json();
+                
+                response = await fetch(url2);
+                const tbtc = await response.json();
+                
+                console.log(nbc['buy'], tbtc['sell'])
+                console.log(nbc['buy'] - tbtc['sell'])
+
+            }
+            
+            async_request();
+            // https://www.youtube.com/watch?v=HTA7pEDGZEU
+            // Promise.all([call_json(Url), call_json(url2)])
+            // .then( files => {
+            //     files.array.forEach(file => {
+            //         process (file.json() );
+            //     });
+            // })
+
+            // let  process = (prom)=>{
+            //     prom.then()
+            // }
+            
+        </script>
+
+    </body>
+</html>
