@@ -25,6 +25,8 @@ class GoogleSlide(object):
 
         self.client_secret_file = client_secret_file
         self.template_id = template_id
+
+        # Lista de requests que vai ser usado pra montar os slides
         self.reqs = []
 
     def client_credenciais(self, token=False):
