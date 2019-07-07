@@ -58,5 +58,22 @@ def slide_by_slide():
     '''  for k in meuslide.template_file['slides']: print(k['objectId'])
     for j  in meuslide.slide_list: print(j)'''
 
-slide_by_slide()
+def build_template():
+        # Caminho pros arquivos de autencticação     
+    client_path = 'GoogleAPI/credentials/client_secret.json'
+    service_path = './credentials/service_key.json'
+    template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
+
+    logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
+    title = {'newTxt': 'Meu Titulo', 'placeholder': '{{TITLE}}'}
+    
+    # Cria Conexão  com o Google e copia um template
+    meuslide = GoogleSlide(client_path, template_id)
+
+    meuslide.client_credenciais()
+    id = '1x1Qt7RBULCAVtJmad4Isct6ElwOWJRrLAWm2EWn7AxU'
+    meuslide.template_builder(id)
+
+#slide_by_slide()
 #full_template()
+build_template()

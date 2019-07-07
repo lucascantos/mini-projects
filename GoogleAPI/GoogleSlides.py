@@ -236,15 +236,22 @@ class GoogleSlide(object):
         pass
     
     @error_handler
-    def template_builder(id):
+    def template_builder(self, id):
         pass
         # Abrir referencia
         example_slides = self.slides_services.presentations().get(presentationId = id, fields = 'slides').execute().get('slides', [])
         # pra cada slide LOOP
         # pra cada elemento LOOP
-        for slide in template_slides:
-            for element in slide:
-                print(element)
+        for slide in example_slides:
+            for element in slide['pageElements']:
+                transform = element['transform']
+                size = element['size']
+                print(element['objectId'])
+                
+                try:
+                    print(element['shape']['shapeType'])
+                except:
+                    pass
         
                 
         # SE elemento = imagem

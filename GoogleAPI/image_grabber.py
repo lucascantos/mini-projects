@@ -1,6 +1,8 @@
 import urllib.request
 
-x = banana
+def banana():
+    print("Fruta")
 
-def string2file(string):
-    
+
+x = banana
+x()
