@@ -44,12 +44,13 @@ def slide_by_slide():
     title = {'newTxt': 'Meu Titulo', 'placeholder': '{{TITLE}}'}
     
     # Cria Conexão  com o Google e copia um template
-    meuslide = GoogleSlide(client_path, template_id, )
+    meuslide = GoogleSlide(client_path, template_id)
     meuslide.client_credenciais()
     meuslide.create_presentation('Teste02')
 
     meuslide.add_slide('cenourinha') 
     meuslide.push_change()
+
     meuslide.add_image(logo['file'], logo['placeholder'])
     meuslide.add_text(title['newTxt'], title['placeholder'])
     meuslide.push_change()
@@ -58,3 +59,4 @@ def slide_by_slide():
     for j  in meuslide.slide_list: print(j)'''
 
 slide_by_slide()
+#full_template()
