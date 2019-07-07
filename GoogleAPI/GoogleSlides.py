@@ -135,12 +135,16 @@ class GoogleSlide(object):
         # Except Criar novo slides
         try:
             self.new_presentation = self.drive_services.files().list(q = 'name="{}"'.format(name)).execute()['files'][0]
+            print("Slide existente")
         except:
             body={
-                'title': 'Teste02'
+                'title': name
             }
-            self.new_presentation = self.slides_services.presentations().create(body=body).execute()
-     
+            self.slides_services.presentations().create(body=body).execute()
+            self.new_presentation = self.drive_services.files().list(q = 'name="{}"'.format(name)).execute()['files'][0]
+
+            print("Novo Slide Criado")
+    
         # Abrir o template
         self.template_file = self.slides_services.presentations().get(presentationId = self.template_id).execute()
         self.slides_labeler()
@@ -226,14 +230,21 @@ class GoogleSlide(object):
         self.reqs.append(update_paragraph_style)
 
     def clear_labels(self):
+        # remove objetos de label dos slides
         pass
-        
+    
     @error_handler
-    def template_builder(self):
+    def template_builder(id):
         pass
         # Abrir referencia
+        example_slides = self.slides_services.presentations().get(presentationId = id, fields = 'slides').execute().get('slides', [])
         # pra cada slide LOOP
         # pra cada elemento LOOP
+        for slide in template_slides:
+            for element in slide:
+                print(element)
+        
+                
         # SE elemento = imagem
         # pegar size e transformada do elemento
         # criar retangulos com essa propriedade
