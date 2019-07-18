@@ -26,21 +26,21 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Cidades</span>
                         </div>
-                        <input onkeydown="console.log('YEET')" type="text" aria-label="origem" id='origem' class="form-control" placeholder='Origem'>
-                        <input type="text" aria-label="destino" id='destino' class="form-control" placeholder="Destino">
+                        <input onkeyup="make_messages()" type="text" aria-label="origem" id='origem' class="form-control" placeholder='Origem (ex: Cidade)'>
+                        <input onkeyup="make_messages()" type="text" aria-label="destino" id='destino' class="form-control" placeholder="Destino (ex: Região)">
                     </div>
 
                     <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Causa</span>
                             </div>
-                            <input type="text" aria-label="causa" id='causa' class="form-control" placeholder="frente fria">
+                            <input onkeyup="make_messages()" type="text" aria-label="causa" id='causa' class="form-control" placeholder="(ex: uma frente fria)">
                         </div>
                         <div class="input-group">
                                 <div class="input-group-prepend">
                                     <label class="input-group-text" for="eta">Tempo Estimado</label>
                                 </div>
-                                <select class="custom-select" id="eta">
+                                <select onchange="make_messages()" class="custom-select" id="eta">
                                     <option selected>45min</option>
                                     <option>30min</option>
                                     <option>1h</option>
@@ -51,7 +51,7 @@
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="windInput">Ventos</label>
                         </div>
-                        <select class="custom-select" id="windInput">
+                        <select onchange="make_messages()" class="custom-select" id="windInput">
                             <option selected>Vento</option>
                             <option value="50km/h">50km/h</option>
                             <option value="60km/h">60km/h</option>
@@ -71,11 +71,57 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script>
 
-            var cityOrigin = 'XXX';
-            var cityDestiny = 'YYY';
-            var eta = 'ZZZ';
-            var wind = 'BBB';
-            var weather = 'AAA';
+            
+            function make_messages(){
+                
+                // Exclui tabela antiga do site
+                var table = document.getElementById('messageTable');
+                table.parentNode.removeChild(table);
+
+                // cria uma tabela nova com as classes e id certo
+                var p = document.getElementById('messageWrapper');
+                var newTable = document.createElement('ul');                
+                newTable.setAttribute('id', 'messageTable');                               
+                newTable.setAttribute('class', 'list-group list-group-flush');
+
+                // Filtra a tabela pelo sistema atuante
+                var system = document.getElementById('systemInput').value;
+                for (var i = 0; i < sms.length; i++){
+                    if (sms[i]['categoria'] == system || system == 'Sistemas'){
+
+                        // pra cada sistema, adiciona o cabeçalho das frases e adiciona a tabeça
+                        var newHeader = document.createElement('H4');                                     
+                        newHeader.setAttribute('class', 'h4');
+                        newHeader.innerHTML = sms[i]['categoria'];
+                        newTable.appendChild(newHeader);
+
+                        var category = sms[i]['categoria'];
+                        for (var j = 0; j < sms[i]['mensagem'].length; j++){
+
+                            // pra cada mensagem, edita as variaveis e adiciona a tabela
+                            var newMessage = document.createElement('li');
+                            newMessage.setAttribute('class', 'list-group-item');
+                            newMessage.innerHTML = edit_messages(sms[i]['mensagem'][j]);
+                            newTable.appendChild(newMessage);
+                        }
+                    }
+                }
+
+                p.appendChild(newTable);
+            }
+            function edit_messages(oldMsg){
+                // função que troca a palavra chave pela nova nos inputs
+                for (var i = 0; i < swap.length; i++){
+                    if (swap[i]['input'].value != null && swap[i]['input'].value != ''){
+                        oldMsg = oldMsg.replace(swap[i]['text'], swap[i]['input'].value);
+                    }
+                }
+                return oldMsg;
+            }
+
+            function random_choice(){
+                var chosen = Math.floor(Math.random * sms[i]['categoria'].length);
+            }
 
             var swap = [
                     {
@@ -104,56 +150,13 @@
                         'text': 'AAA'
                     },                    
                 ]
-            
-            function make_messages(){
-                
-                var table = document.getElementById('messageTable');
-                table.parentNode.removeChild(table);
-
-                var p = document.getElementById('messageWrapper');
-                var newTable = document.createElement('ul');                
-                newTable.setAttribute('id', 'messageTable');                               
-                newTable.setAttribute('class', 'list-group list-group-flush');
-
-                var system = document.getElementById('systemInput').value;
-                for (var i = 0; i < sms.length; i++){
-                    if (sms[i]['categoria'] == system || system == 'Sistemas'){
-
-                        var newHeader = document.createElement('H4');                                     
-                        newHeader.setAttribute('class', 'h4');
-                        newHeader.innerHTML = sms[i]['categoria'];
-                        newTable.appendChild(newHeader);
-
-                        var category = sms[i]['categoria'];
-                        for (var j = 0; j < sms[i]['mensagem'].length; j++){
-
-                            var newMessage = document.createElement('li');
-                            newMessage.setAttribute('class', 'list-group-item');
-                            newMessage.innerHTML = sms[i]['mensagem'][j];
-                            newTable.appendChild(newMessage);
-                        }
-                    }
-                }
-
-                p.appendChild(newTable);
-            }
-            function edit_messages(oldMsg){
-                for (var i = 0; i < swap.length; i++){
-                    if (swap[i]['input'].value != null || swap[i]['input'].value != ''){
-                        oldMsg.replace(swap[i]['text'], swap[i]['input'].value);
-                        swap[i]['text'] = swap[i]['input'].value
-                    }
-                }
-            }
-
-            make_messages()
 
             var sms = [
                 {
                     categoria: 'Chuva Forte',
                     mensagem: ['Temos alerta de chuva forte entre XXX seguindo para YYY dentro de ZZZ. Isso é causado por AAA. Há risco de rajadas de vento e trovoadas.',
                             'Chove forte em XXX e segue em direção à YYY. Essa chuva ocorre por AAA e deve atingir a cidade em ZZZ.',
-                            'Há registro de Temporais na cidade de XXX causado por AAA. A previsão é que atinja YYY em ZZZ. Não se descarta a possibilidade de ventos fortes e descargas eletricas.',
+                            'Há registro de temporais na cidade de XXX causado por AAA. A previsão é que atinja YYY em ZZZ. Não se descarta a possibilidade de ventos fortes e descargas eletricas.',
                             ]
                 },
                 {
@@ -166,10 +169,12 @@
                     categoria: 'Ventania',
                     mensagem: ['Alerta de ventania para XXX. Esse vento ocorre por conta de AAA e há risco de novas rajadas nas proximas ZZZ.',
                             'Em XXX, foi registrado rajadas de vento acima de 50km/h.',
-                            'Houve registro de Rajadas de Vento forte em XXX causado pela aproximação de AAA. '
+                            'Houve registro de rajadas de vento forte em XXX causado pela aproximação de AAA. '
                             ]
                 }
             ];
+            
+            make_messages()
             //excluir e criar
             // alterar o existente
 
