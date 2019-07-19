@@ -37,16 +37,18 @@ class imagem(object):
     def split_param(self):
         '''
         Busca dentro da string URL por parametro entre {}.
+        conta quantas vezes a variavel ja foi chamada e chama a data correspondente
         '''
         reference_list = []
         param_list = re.findall('\{(.*?)\}', self.url)
         for param in param_list:
+
+            i = reference_list.count(param)
             if re.search('%', param):
-                i = reference_list.count(param)
                 self.url = self.url.replace(param, self.time[i].strftime(param))
-                reference_list.append(param)
             else:
                 self.url.replace(param, self.param)
+            reference_list.append(param)
 
     def change_time(self, full_delta):
         '''
