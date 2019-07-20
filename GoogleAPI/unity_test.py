@@ -1,4 +1,4 @@
-from GoogleSlides import GoogleSlide
+from google_slides import GoogleSlide
 from time import time
 
 def timeit (function):

@@ -1,3 +1,18 @@
+from apiclient.discovery import build
+from httplib2 import Http
+from oauth2client import client, tools
+from oauth2client.file import Storage
+
+
+def error_handler(function):
+    def wrapper(*args, **kwargs):
+        try:
+            function(*args, **kwargs)
+        except Exception as e:
+            print(e)
+            return None
+    return wrapper
+
 class GoogleDrive(object):
     def __init__(self, client_secret_file, template_id):
         '''
@@ -34,7 +49,7 @@ class GoogleDrive(object):
         self.drive_services = build('drive', 'v3', http=self.credz.authorize(Http()))
         self.slides_services = build('slides', 'v1', http=self.credz.authorize(Http()))
 
-    def grab_image(self, img_file_name):
+    def grab_file_drive(self, img_file_name):
         '''
         Busca arquivo de imagem dentro do GDrive e devolve a URL deste        
         img_file_name: nome do arquivo de imagem
