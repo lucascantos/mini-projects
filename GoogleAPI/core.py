@@ -74,6 +74,6 @@ def build_template():
     id = '1x1Qt7RBULCAVtJmad4Isct6ElwOWJRrLAWm2EWn7AxU'
     meuslide.template_builder(id)
 
-#slide_by_slide()
+slide_by_slide()
 #full_template()
-build_template()
+#build_template()

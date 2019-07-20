@@ -50,15 +50,9 @@ class GoogleSlide(object):
         self.drive_services = build('drive', 'v3', http=self.credz.authorize(Http()))
         self.slides_services = build('slides', 'v1', http=self.credz.authorize(Http()))
 
-    @error_handler
-    def push_change(self):
-        self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
-        self.reqs = []
-
     def grab_image(self, img_file_name):
         '''
-        Busca arquivo de imagem dentro do GDrive e devolve a URL deste
-        
+        Busca arquivo de imagem dentro do GDrive e devolve a URL deste        
         img_file_name: nome do arquivo de imagem
         '''
         # cria um link com acesso ao logo de imagem que vc quer
@@ -67,15 +61,19 @@ class GoogleSlide(object):
         credz_token = self.credz.access_token
         return ('{}&access_token={}'.format(id_uri, credz_token))
 
+    @error_handler
+    def push_change(self):
+        self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
+        self.reqs = []
+
     def add_image(self, img_file, slide_obj):
         '''
         cria uma nova imagem no lugar de um objeto em especifico
 
-        param file_name: Nome do arquivo de imagem
-        param slide_obj: Objeto dentro do template que vai ser substitudo pela imagem
+        file_name: Nome do arquivo de imagem
+        slide_obj: Objeto dentro do template que vai ser substitudo pela imagem
         '''
 
-        
         img_url = self.grab_image(img_file)
         for _ in self.grab_template_element(slide_obj):
             new_image = {'createImage': {
@@ -92,7 +90,6 @@ class GoogleSlide(object):
     def add_text(self, text, slide_obj):
         '''
         Substitui todos os textos com aquele ID no texto.
-
         text: Texto que será inserido
         slide_obj: Texto que será substituido
         '''
@@ -102,7 +99,7 @@ class GoogleSlide(object):
     def grab_template_element(self, object_name):
         '''
         METODO 1
-        Busca o elemento dentro dos templates e devolve o objeto
+        Busca o elemento dentro dos templates e devolve o objeto.
         '''
         self.slides = self.slides_services.presentations().get(presentationId = self.new_presentation['id'], fields = 'slides').execute().get('slides', [])
         self.obj = None
@@ -130,6 +127,7 @@ class GoogleSlide(object):
 
     def create_presentation(self, name):
         '''
+        METODO 2
         De um arquivo de templates, ele pega apenas um dos slides e copia este para o novo
         name: Nome da nova apresentação, ou apresentação existente
         '''
@@ -197,6 +195,7 @@ class GoogleSlide(object):
     def get2create(self, slide_element, slide_id, index):
         '''
         Converte o JSON de get pra um JSON de create.
+        Quando se cria um slide, as variaveis são diferentes de quando se pega um slide existente
         '''
         create_shape = {'createShape': {
             'objectId': '{}_{}'.format(slide_id, index),
