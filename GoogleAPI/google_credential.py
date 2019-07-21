@@ -161,9 +161,3 @@ class GoogleDrive(object):
 
         print('Good')
     
-def test():
-    x = GoogleDrive('asd')
-    x.pdf_slicer()
-    x
-
-test()

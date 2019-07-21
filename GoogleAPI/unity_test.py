@@ -106,5 +106,5 @@ def drive():
 #slide_by_slide()
 #full_template()
 #build_template()
-#get_spreadsheet()
+get_spreadsheet()
 #drive()
