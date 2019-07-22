@@ -1,6 +1,7 @@
 from google_slides import GoogleSlide
 from google_sheets import GoogleSheets
 from google_credential import GoogleDrive
+from image_grabber import DownloadURL
 from time import time
 
 def timeit (function):
@@ -86,6 +87,12 @@ def get_spreadsheet():
     minhatablea.client_credenciais()
     minhatablea.grab_spreadsheet('Imagens')
     y = minhatablea.make_dataframe()
+
+    minha_imagem = DownloadURL('prec_mensal')
+    minha_imagem.database = y
+    minha_imagem.grab_url()
+    minha_imagem.split_param()
+    print(minha_imagem.url)
 
 def drive():
    

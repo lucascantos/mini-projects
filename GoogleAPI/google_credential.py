@@ -22,8 +22,6 @@ class GoogleDrive(object):
         '''
         self.client_secret_file = client_secret_file
 
-
-
     def client_credenciais(self, token=False):
         '''
         Prepara as credenciais de acesso aos arquivos e documentos do google
@@ -81,7 +79,7 @@ class GoogleDrive(object):
             'name': 'teste',
             'parents': [folder_id['id']]
         }
-        media = MediaFileUpload(url, mimetype='image/jpeg')
+        media = MediaFileUpload(local_path, mimetype='image/jpeg')
         self.drive_services.files().create(media_body=media, fields='id', body=image_metadata).execute()
 
     def crop_image(self):
@@ -97,67 +95,6 @@ class GoogleDrive(object):
         image = np.asarray(bytearray(resp), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
         img = cv2.imread(local_image)
-
-    def pdf_slicer(self):
-        from PyPDF2 import PdfFileReader, PdfFileWriter
-        from PIL import Image
-        import requests
-        from io import StringIO, BytesIO
-        import urllib.request
-
-        target_image = 'https://i.kym-cdn.com/photos/images/original/000/124/933/1304376955947.png'
-        target_pdf = 'https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/lanina/enso_evolution-status-fcsts-web.pdf'
-        local_pdf = 'GoogleAPI\enso_evolution-status-fcsts-web.pdf'
-
-        # with urllib.request.urlopen(target_pdf) as url:
-        #     resp = url.read()
-        x = requests.get(target_pdf)
-
-        # page = convert_from_bytes(resp, 12)
-        # print(page)
-        # print(x.content)
-        url_encoded = BytesIO(x.content)
-        pdf = open(url, 'rb')
-        fileReader = PdfFileReader(BytesIO(x.content))
-        page0 = fileReader.getPage(4)
-        print(page0)
-
-        xObject = page0['/Resources']['/XObject'].getObject()
-        for obj in xObject:
-            if xObject[obj]['/Subtype'] == '/Image':
-                size = (xObject[obj]['/Width'], xObject[obj]['/Height'])
-                if size[0] < 2000 and size[1] > 149:
-                    try: 
-                        data = xObject[obj].getData()
-                        if xObject[obj]['/ColorSpace'] == '/DeviceRGB':
-                            mode = "RGB"
-                        else:
-                            mode = "P"
-                        
-                        if '/Filter' in xObject[obj]:
-                            if xObject[obj]['/Filter'] == '/FlateDecode':
-                                img = Image.frombytes(mode, size, data)
-                                img.save(obj[1:] + ".png")
-                            elif xObject[obj]['/Filter'] == '/DCTDecode':
-                                img = open(obj[1:] + ".jpg", "wb")
-                                img.write(data)
-                                img.close()
-                            elif xObject[obj]['/Filter'] == '/JPXDecode':
-                                img = open(obj[1:] + ".jp2", "wb")
-                                img.write(data)
-                                img.close()
-                            elif xObject[obj]['/Filter'] == '/CCITTFaxDecode':
-                                img = open(obj[1:] + ".tiff", "wb")
-                                img.write(data)
-                                img.close()
-                        else:
-                            img = Image.frombytes(mode, size, data)
-                            img.save(obj[1:] + ".png")
-                        
-                        print(obj, size)
-                    except:
-                        print(f'Error: {obj}')
-                        pass
 
         print('Good')
     

@@ -2,10 +2,15 @@ import urllib.request
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import re
-  
+
+from PyPDF2 import PdfFileReader, PdfFileWriter
+from PIL import Image
+import requests
+from io import StringIO, BytesIO
+import urllib.request
 
 # Pega variaveis do link 
-class imagem(object):
+class DownloadURL(object):
     def __init__(self, image_name, param=''):
         '''
         Classe que faz o download de uma imagem baseado no nome de uma variavel
@@ -21,18 +26,25 @@ class imagem(object):
         '''
         Busca dentro do banco de dados a linha que contem os dados.
         '''
+        data_row = self.database.loc[self.database['name'] == self.image_name]
+        self.url = data_row.iloc[0]['file_url']
+        timedelta = re.split(",", data_row.iloc[0]['timedelta'])
+        self.time = [self.change_time(delta) for delta in timedelta]
 
-        single_image =  (data for data in self.database)
-        for i in single_image:
-             if single_image['name'] == self.image_name:
-                '''
-                Salva a url e monta uma lista com as datas que vão ser alteradas no link
-                '''
-                self.single_image = single_image
-                self.url = single_image['file_url']
-                timedelta = re.split(",", single_image['timedelta'])
-                self.time = [self.change_time(delta) for delta in timedelta]
-                yield
+        
+        # single_image =  (index, data for index, data in self.database.iterrows())
+        # for i in single_image:
+            
+        #     print(i)
+        #     if i['name'] == self.image_name:
+        #         '''
+        #         Salva a url e monta uma lista com as datas que vão ser alteradas no link
+        #         '''
+        #         self.single_image = single_image
+        #         self.url = single_image['file_url']
+        #         timedelta = re.split(",", single_image['timedelta'])
+        #         self.time = [self.change_time(delta) for delta in timedelta]
+        #         break
 
     def split_param(self):
         '''
@@ -57,47 +69,73 @@ class imagem(object):
         delta = int(full_delta[:2])
         period = full_delta[-1]
         keydelta = {period: delta}
-        yield self.today_date + relativedelta(keydelta)
+        return self.today_date + relativedelta(keydelta)
+    
 
-        
+    def pdf_slicer(self):
+        try:
+            x = requests.get(self.url)
+        except:
+            print('URL não valida')
+        fileReader = PdfFileReader(BytesIO(x.content))
+        page0 = fileReader.getPage(4)
+        print(page0)
 
+        xObject = page0['/Resources']['/XObject'].getObject()
+        for obj in xObject:
+            if xObject[obj]['/Subtype'] == '/Image':
+                size = (xObject[obj]['/Width'], xObject[obj]['/Height'])
+                if size[0] < 2000 and size[1] > 149:
+                    try: 
+                        data = xObject[obj].getData()
+                        if xObject[obj]['/ColorSpace'] == '/DeviceRGB':
+                            mode = "RGB"
+                        else:
+                            mode = "P"
+                        
+                        if '/Filter' in xObject[obj]:
+                            if xObject[obj]['/Filter'] == '/FlateDecode':
+                                img = Image.frombytes(mode, size, data)
+                                img.save(obj[1:] + ".png")
+                            elif xObject[obj]['/Filter'] == '/DCTDecode':
+                                img = open(obj[1:] + ".jpg", "wb")
+                                img.write(data)
+                                img.close()
+                            elif xObject[obj]['/Filter'] == '/JPXDecode':
+                                img = open(obj[1:] + ".jp2", "wb")
+                                img.write(data)
+                                img.close()
+                            elif xObject[obj]['/Filter'] == '/CCITTFaxDecode':
+                                img = open(obj[1:] + ".tiff", "wb")
+                                img.write(data)
+                                img.close()
+                        else:
+                            img = Image.frombytes(mode, size, data)
+                            img.save(obj[1:] + ".png")
+                        
+                        print(obj, size)
+                    except:
+                        print(f'Error: {obj}')
+                        pass
 
+# def banana():
+#     print("Fruta")
 
-'''
-    def text_split(self, file_url):
-        # Pega o nome de dominio
-        self.subdomain_list = file_url.split('/')
-        for self.company in self.function_list():
-            if re.search(self.company, self.subdomain_list[2]):            
-                locals()[self.company]()                
+# x = 'banana'
+# locals()[x]()
 
-    def function_list(self):
-        l = []
-        for key, value in locals().items():
-            if callable(value) and value.__module__ == __name__:
-                l.append(key)
-        return l   
-'''
+# ano = 20
+# string = 'batata_{YYYY},2'
+# print(string.format(YYYY=ano))
+# print(re.findall('\{(.*?)\}',string))
+# print(re.split(',', string))
+# date = datetime.now()
+# print(date + relativedelta(years=-1))
 
-
-def banana():
-    print("Fruta")
-
-x = 'banana'
-locals()[x]()
-
-ano = 20
-string = 'batata_{YYYY},2'
-print(string.format(YYYY=ano))
-print(re.findall('\{(.*?)\}',string))
-print(re.split(',', string))
-date = datetime.now()
-print(date + relativedelta(years=-1))
-
-x = [0,1,2]
-y = (a for a in x)
-for i in y:
-    print(i)
+# x = [0,1,2]
+# y = (a for a in x)
+# for i in y:
+#     print(i)
 
 
 

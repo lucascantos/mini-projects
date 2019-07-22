@@ -11,5 +11,4 @@ class GoogleSheets(GoogleDrive):
         df = pd.DataFrame(self.database, columns=self.database[0])
         df=df[1:]
         df.reset_index(inplace=True, drop=True)
-        print(df)
         return df
