@@ -66,9 +66,10 @@ class DownloadURL(object):
         '''
         função que converte o timedelt em data
         '''
-        delta = int(full_delta[:2])
-        period = full_delta[-1]
+        delta = int(full_delta[-2:])
+        period = full_delta[:-2]
         keydelta = {period: delta}
+        print(keydelta)
         return self.today_date + relativedelta(keydelta)
     
 
