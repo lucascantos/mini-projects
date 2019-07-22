@@ -15,4 +15,6 @@ python-oauth2
 gspread
 oauth2client
 googleapiclient
+opencv-python
+PyPDF2
 httplib2

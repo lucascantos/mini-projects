@@ -6,3 +6,4 @@ ReanalysisSandbox/Data/*
 storage.json
 GoogleAPI/credentials/*
 CEMADEN/*.csv
+*.png
