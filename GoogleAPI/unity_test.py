@@ -85,10 +85,10 @@ def get_spreadsheet():
 
     minhatablea = GoogleSheets(client_path)
     minhatablea.client_credenciais()
-    minhatablea.grab_spreadsheet('Imagens')
+    minhatablea.grab_spreadsheet('Imagens', sheet_name='Interweb')
     y = minhatablea.make_dataframe()
 
-    minha_imagem = DownloadURL('prec_mensal')
+    minha_imagem = DownloadURL('anom_prec', '1')
     minha_imagem.database = y
     minha_imagem.grab_url()
     minha_imagem.split_param()

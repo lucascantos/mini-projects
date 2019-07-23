@@ -19,7 +19,7 @@ class DownloadURL(object):
         '''
         self.image_name = image_name
         self.database = 'database_link_or_url'
-        self.today_date = datetime.utcnow
+        self.today_date = datetime.utcnow()
         self.param = param
     
     def grab_url(self):
@@ -28,38 +28,27 @@ class DownloadURL(object):
         '''
         data_row = self.database.loc[self.database['name'] == self.image_name]
         self.url = data_row.iloc[0]['file_url']
-        timedelta = re.split(",", data_row.iloc[0]['timedelta'])
-        self.time = [self.change_time(delta) for delta in timedelta]
-
+        try:
+            timedelta = re.split(",", data_row.iloc[0]['timedelta'])
+            self.time = [self.change_time(delta) for delta in timedelta]
+        except:
+            pass
         
-        # single_image =  (index, data for index, data in self.database.iterrows())
-        # for i in single_image:
-            
-        #     print(i)
-        #     if i['name'] == self.image_name:
-        #         '''
-        #         Salva a url e monta uma lista com as datas que vão ser alteradas no link
-        #         '''
-        #         self.single_image = single_image
-        #         self.url = single_image['file_url']
-        #         timedelta = re.split(",", single_image['timedelta'])
-        #         self.time = [self.change_time(delta) for delta in timedelta]
-        #         break
-
     def split_param(self):
         '''
         Busca dentro da string URL por parametro entre {}.
         conta quantas vezes a variavel ja foi chamada e chama a data correspondente
         '''
         reference_list = []
-        param_list = re.findall('\{(.*?)\}', self.url)
+        param_object = '\{(.*?)\}'
+        param_list = re.findall(param_object, self.url)
         for param in param_list:
-
             i = reference_list.count(param)
             if re.search('%', param):
-                self.url = self.url.replace(param, self.time[i].strftime(param))
+                print(param, self.time[i].strftime(param))
+                self.url = self.url.replace('{'+param+'}', self.time[i].strftime(param).lower(), 1)
             else:
-                self.url.replace(param, self.param)
+                self.url = self.url.replace('{'+param+'}', self.param)
             reference_list.append(param)
 
     def change_time(self, full_delta):
@@ -69,8 +58,7 @@ class DownloadURL(object):
         delta = int(full_delta[-2:])
         period = full_delta[:-2]
         keydelta = {period: delta}
-        print(keydelta)
-        return self.today_date + relativedelta(keydelta)
+        return self.today_date + relativedelta(**keydelta)
     
 
     def pdf_slicer(self):
