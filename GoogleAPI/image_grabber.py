@@ -28,8 +28,10 @@ class DownloadURL(object):
         '''
         data_row = self.database.loc[self.database['name'] == self.image_name]
         self.url = data_row.iloc[0]['file_url']
-        timedelta = re.split(",", data_row.iloc[0]['timedelta'])
-        self.time = [self.change_time(delta) for delta in timedelta]
+        if data_row.iloc[0]['timedelta'] != '':
+            timedelta = re.split(",", data_row.iloc[0]['timedelta'])
+            self.time = [self.change_time(delta) for delta in timedelta]
+
 
         
         # single_image =  (index, data for index, data in self.database.iterrows())
@@ -56,10 +58,8 @@ class DownloadURL(object):
         for param in param_list:
             i = reference_list.count(param)
             if re.search('%', param):
-                print(param)
                 if param == '%H':
                      replacement = self.hour_default()
-                     print(replacement)
                 else:
                     replacement = self.time[i].strftime(param)               
             else:
