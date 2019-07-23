@@ -19,7 +19,7 @@ class DownloadURL(object):
         '''
         self.image_name = image_name
         self.database = 'database_link_or_url'
-        self.today_date = datetime.utcnow
+        self.today_date = datetime.utcnow()
         self.param = param
     
     def grab_url(self):
@@ -54,13 +54,25 @@ class DownloadURL(object):
         reference_list = []
         param_list = re.findall('\{(.*?)\}', self.url)
         for param in param_list:
-
             i = reference_list.count(param)
             if re.search('%', param):
-                self.url = self.url.replace(param, self.time[i].strftime(param))
+                print(param)
+                if param == '%H':
+                     replacement = self.hour_default()
+                     print(replacement)
+                else:
+                    replacement = self.time[i].strftime(param)               
             else:
-                self.url.replace(param, self.param)
+                replacement = self.param
+            
+            self.url = self.url.replace('{'+param+'}', replacement)
             reference_list.append(param)
+
+    def hour_default(self):
+        if self.today_date.hour >= 12:
+            return '12'
+        else:
+            return '00'
 
     def change_time(self, full_delta):
         '''
@@ -69,8 +81,8 @@ class DownloadURL(object):
         delta = int(full_delta[-2:])
         period = full_delta[:-2]
         keydelta = {period: delta}
-        print(keydelta)
-        return self.today_date + relativedelta(keydelta)
+        print(relativedelta(**keydelta))
+        return self.today_date + relativedelta(**keydelta)
     
 
     def pdf_slicer(self):
