@@ -88,7 +88,7 @@ def get_spreadsheet():
     minhatablea.grab_spreadsheet('Imagens', sheet_name='Interweb')
     y = minhatablea.make_dataframe()
 
-    minha_imagem = DownloadURL('anom_prec', '1')
+    minha_imagem = DownloadURL('nino34_fcst', '1')
     minha_imagem.database = y
     minha_imagem.grab_url()
     minha_imagem.split_param()
@@ -107,7 +107,7 @@ def drive():
 
     drive = GoogleDrive(client_path)
     drive.client_credenciais()
-    #x = drive.get_fileid('Imagens')
+    #x = drive.get_fileid('Imagens') o fuking programador é autista
 
 
 #slide_by_slide()

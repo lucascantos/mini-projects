@@ -28,11 +28,11 @@ class DownloadURL(object):
         '''
         data_row = self.database.loc[self.database['name'] == self.image_name]
         self.url = data_row.iloc[0]['file_url']
-        try:
+        if data_row.iloc[0]['timedelta'] != '':
             timedelta = re.split(",", data_row.iloc[0]['timedelta'])
             self.time = [self.change_time(delta) for delta in timedelta]
-        except:
-            pass
+
+
         
     def split_param(self):
         '''
@@ -45,11 +45,21 @@ class DownloadURL(object):
         for param in param_list:
             i = reference_list.count(param)
             if re.search('%', param):
-                print(param, self.time[i].strftime(param))
-                self.url = self.url.replace('{'+param+'}', self.time[i].strftime(param).lower(), 1)
+                if param == '%H':
+                     replacement = self.hour_default()
+                else:
+                    replacement = self.time[i].strftime(param)               
             else:
-                self.url = self.url.replace('{'+param+'}', self.param)
+                replacement = self.param
+            
+            self.url = self.url.replace('{'+param+'}', replacement)
             reference_list.append(param)
+
+    def hour_default(self):
+        if self.today_date.hour >= 12:
+            return '12'
+        else:
+            return '00'
 
     def change_time(self, full_delta):
         '''
