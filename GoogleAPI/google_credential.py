@@ -21,8 +21,10 @@ class GoogleDrive(object):
         client_secret_file: arquivo de autenticação aos arquivos e dados do google API
         '''
         self.client_secret_file = client_secret_file
-
-    def client_credenciais(self, token=False):
+        self._client_credenciais()
+        
+    @error_handler
+    def _client_credenciais(self, token=False):
         '''
         Prepara as credenciais de acesso aos arquivos e documentos do google
         token: Por enquanto inutil. A ideia é que a autorização pode ser via Token ou via Credencial
@@ -44,7 +46,7 @@ class GoogleDrive(object):
         self.slides_services = build('slides', 'v1', http=self.credz.authorize(Http()))
         self.sheet_services = build('sheets', 'v4', http=self.credz.authorize(Http()))
     
-    def get_fileid (self, file_name, mimeType=''):
+    def _get_fileid (self, file_name, mimeType=''):
         '''
         Converte uma string com nome de um arquivo na conta google para o ID dele.
         file_name: nome do arquivo no drive, sheets ou slides
@@ -54,18 +56,18 @@ class GoogleDrive(object):
             query_string = f"{query_string} and mimeType='{mimeType}'"
         return self.drive_services.files().list(q=query_string).execute()['files'][0]
 
-    def grab_file_drive(self, img_file_name):
+    def _file_to_url(self, img_file_name):
         '''
         Busca arquivo de imagem dentro do GDrive e devolve a URL deste        
         img_file_name: nome do arquivo de imagem
         '''
         # cria um link com acesso ao logo de imagem que vc quer
-        template_file = self.get_fileid(img_file_name)
+        template_file = self._get_fileid(img_file_name)
         id_uri = self.drive_services.files().get_media(fileId=template_file['id']).uri
         credz_token = self.credz.access_token
         return ('{}&access_token={}'.format(id_uri, credz_token))
     
-    def upload_image(self, local_path):
+    def upload_file(self, local_path):
         '''
         Faz upload de arquivo local para o Google Drive.
         local_path: string, caminha do arquivo pra upload. Não funciona URL.
@@ -74,27 +76,10 @@ class GoogleDrive(object):
         https://googleapis.github.io/google-api-python-client/docs/epy/googleapiclient.http.MediaFileUpload-class.html
         '''
         folder_mimeType = 'application/vnd.google-apps.folder'
-        folder_id = self.get_fileid('Imagens', mimeType=folder_mimeType)
+        folder_id = self._get_fileid('Imagens', mimeType=folder_mimeType)
         image_metadata = {
             'name': 'teste',
             'parents': [folder_id['id']]
         }
         media = MediaFileUpload(local_path, mimetype='image/jpeg')
         self.drive_services.files().create(media_body=media, fields='id', body=image_metadata).execute()
-
-    def crop_image(self):
-        '''
-        Esse metodo deve ir pro Image Graber
-        '''
-        import cv2
-        import urllib.request        
-        import numpy as np
-
-        with urllib.request.urlopen(target_image) as url:
-            resp = url.read()
-        image = np.asarray(bytearray(resp), dtype="uint8")
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-        img = cv2.imread(local_image)
-
-        print('Good')
-    

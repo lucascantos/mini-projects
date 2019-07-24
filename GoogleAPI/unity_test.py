@@ -1,7 +1,8 @@
 from google_slides import GoogleSlide
 from google_sheets import GoogleSheets
 from google_credential import GoogleDrive
-from image_grabber import DownloadURL
+from image_grabber import UrlMaker
+
 from time import time
 
 def timeit (function):
@@ -25,15 +26,13 @@ def full_template():
 
     # Cria Conexão  com o Google e copia um template
     meuslide = GoogleSlide(client_path, template_id)
-    meuslide.client_credenciais()
+    meuslide._client_credenciais()
 
     meuslide.clone_presentation('Teste01')
 
     # Monta a ordem dos objetos a serem substituidos a partir de um template
     meuslide.add_image(logo['file'], logo['placeholder'])
     meuslide.add_text(title['newTxt'], title['placeholder'])
-    # pprint(meuslide.reqs)
-    # Substitui os items
 
 @timeit
 def slide_by_slide():
@@ -48,54 +47,37 @@ def slide_by_slide():
     
     # Cria Conexão  com o Google e copia um template
     meuslide = GoogleSlide(client_path, template_id)
-    meuslide.client_credenciais()
     meuslide.create_presentation('Teste02')
 
-    meuslide.add_slide('cenourinha') 
-    meuslide.push_change()
+    meuslide.add_slide('cenourinha')
 
     meuslide.add_image(logo['file'], logo['placeholder'])
     meuslide.add_image(graph['url'], graph['placeholder'])
     meuslide.add_text(title['newTxt'], title['placeholder'])
-    meuslide.push_change()
 
-    '''  for k in meuslide.template_file['slides']: print(k['objectId'])
-    for j  in meuslide.slide_list: print(j)'''
 
 def build_template():
         # Caminho pros arquivos de autencticação     
     client_path = 'GoogleAPI/credentials/client_secret.json'
-    service_path = './credentials/service_key.json'
     template_id = '1k2NX5dV6KPoyMq89phXFQ_QoOyhti4Sc9Yw6oDX97Z4'
-
-    logo = {'file': 'logo.jpg', 'placeholder': '{{LOGO}}'}
-    title = {'newTxt': 'Meu Titulo', 'placeholder': '{{TITLE}}'}
     
     # Cria Conexão  com o Google e copia um template
     meuslide = GoogleSlide(client_path, template_id)
 
-    meuslide.client_credenciais()
-    id = '1x1Qt7RBULCAVtJmad4Isct6ElwOWJRrLAWm2EWn7AxU'
-    meuslide.template_builder(id)
+    presentation_template_id = '1x1Qt7RBULCAVtJmad4Isct6ElwOWJRrLAWm2EWn7AxU'
+    meuslide.template_builder(presentation_template_id)
 
 def get_spreadsheet():
             # Caminho pros arquivos de autencticação     
     client_path = 'GoogleAPI/credentials/client_secret.json'
     service_path = './credentials/service_key.json'
 
-    minhatablea = GoogleSheets(client_path)
-    minhatablea.client_credenciais()
-    minhatablea.grab_spreadsheet('Imagens', sheet_name='Interweb')
-    y = minhatablea.make_dataframe()
-
-    minha_imagem = DownloadURL('nino34_fcst', '1')
-    minha_imagem.database = y
-    minha_imagem.grab_url()
-    minha_imagem.split_param()
+    minha_imagem = UrlMaker(client_path)
+    minha_imagem.grab_spreadsheet('Imagens', sheet_name='Interweb')
+    minha_imagem.grab_url('anom_prec_{i}')
     print(minha_imagem.url)
 
-def drive():
-   
+def drive():   
     import urllib
     import urllib3
     import requests
@@ -106,8 +88,7 @@ def drive():
     local_image = 'GoogleAPI\imagem 1.png'
 
     drive = GoogleDrive(client_path)
-    drive.client_credenciais()
-    #x = drive.get_fileid('Imagens') o fuking programador é autista
+    #x = drive.get_fileid('Imagens')
 
 
 #slide_by_slide()

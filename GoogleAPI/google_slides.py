@@ -15,7 +15,7 @@ class GoogleSlide(GoogleDrive):
         super().__init__(client_secret_file)
 
     @error_handler
-    def push_change(self):
+    def _push_change(self):
         self.slides_services.presentations().batchUpdate(body={'requests': self.reqs}, presentationId=self.new_presentation['id'], fields='').execute()
         self.reqs = []
 
@@ -27,10 +27,10 @@ class GoogleSlide(GoogleDrive):
         slide_obj: Objeto dentro do template que vai ser substitudo pela imagem
         '''
         try:
-            img_url = self.grab_file_drive(img_file)
+            img_url = self._file_to_url(img_file)
         except:
             img_url = img_file
-        for _ in self.grab_template_element(slide_obj):
+        for _ in self._grab_template_element(slide_obj):
             new_image = {'createImage': {
                             'url': img_url,
                             'elementProperties': {
@@ -41,7 +41,7 @@ class GoogleSlide(GoogleDrive):
                         }}
             self.reqs.append(new_image)
             self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
-            
+            self._push_change()
 
     def add_text(self, text, slide_obj):
         '''
@@ -51,9 +51,10 @@ class GoogleSlide(GoogleDrive):
         slide_obj: Texto que será substituido
         '''
         new_text =  {'replaceAllText': {'replaceText': text, 'containsText': {'text': slide_obj}}}
-        self.reqs.append(new_text)        
+        self.reqs.append(new_text)  
+        self._push_change()
 
-    def grab_template_element(self, object_name):
+    def _grab_template_element(self, object_name):
         '''
         METODO 1
         Busca o elemento dentro dos templates e devolve o objeto.
@@ -68,7 +69,7 @@ class GoogleSlide(GoogleDrive):
                         yield
                     elif self.obj['shape']['shapeType'] == 'ELLIPSE':
                         self.reqs.append({'deleteObject': {'objectId': self.obj['objectId']}})
-                        self.push_change()
+                        self._push_change()
                 except:
                     pass
 
@@ -78,7 +79,7 @@ class GoogleSlide(GoogleDrive):
         Cria uma copia do template pra ser alterado.
         Valide para o caso de ter um template completo de uma apresentação
         '''
-        old_slide = self.get_fileid(name)
+        old_slide = self._get_fileid(name)
 
         if old_slide:
             # Deleta slides antigos com o mesmo nome só pra não explodir meu driver
@@ -94,22 +95,22 @@ class GoogleSlide(GoogleDrive):
         # Try Abrir novo slides
         # Except Criar novo slides
         try:
-            self.new_presentation = self.get_fileid(name)
+            self.new_presentation = self._get_fileid(name)
             print("Slide existente")
         except:
             body={
                 'title': name
             }
             self.slides_services.presentations().create(body=body).execute()
-            self.new_presentation = self.get_fileid(name)
+            self.new_presentation = self._get_fileid(name)
 
             print("Novo Slide Criado")
     
         # Abrir o template
         self.template_file = self.slides_services.presentations().get(presentationId = self.template_id).execute()
-        self.slides_labeler()
+        self._slides_labeler()
 
-    def slides_labeler(self):
+    def _slides_labeler(self):
         '''
         Cria uma lista com os labels e ids dos slides. 
         necessario, pois não tem um jeito simples de diferenciar entre os slides
@@ -148,9 +149,9 @@ class GoogleSlide(GoogleDrive):
 
 
         for index, slide_element in enumerate(slide_elements):
-            self.get2create(slide_element, slide_props['newId'], index)
+            self._get2create(slide_element, slide_props['newId'], index)
 
-    def get2create(self, slide_element, slide_id, index):
+    def _get2create(self, slide_element, slide_id, index):
         '''
         Converte o JSON de get pra um JSON de create.
         Quando se cria um slide, as variaveis são diferentes de quando se pega um slide existente
@@ -188,9 +189,8 @@ class GoogleSlide(GoogleDrive):
         self.reqs.append(update_text_style)
         self.reqs.append(update_paragraph_style)
 
-    def clear_labels(self):
+    def _clear_labels(self):
         # remove objetos de label dos slides
-
         
         print(self.obj['objectId'], self.obj['shape']['shapeType'] == 'ELIPSE')
         pass
