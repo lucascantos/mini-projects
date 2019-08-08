@@ -182,8 +182,11 @@ def make_xlsx(df):
 
     # Transpose the data and save the file.
     grouped_t = grouped.unstack(level=[1, 2])
+    grouped_t.to_excel('./output.xlsx')
 
+    print(grouped_t)
 
+def change_sheet_design(xls_file):
     writer = pd.ExcelWriter('SemanaOperativa/output.xlsx', engine ='xlsxwriter')
 
     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -200,30 +203,11 @@ def make_xlsx(df):
     writer.save()
     
     #h tps://xlsxwriter.readthedocs.io/working_with_conditional_formats.html
-    # print(grouped_t)
-
-def change_sheet_design(xls_file):
-    pass
-
-    # # Cria planilha e formata a celulas 
-    # wb = xlsxwriter.Workbook('SemenaOperativa_2.xlsx')
-    # cell_title = wb.add_format({'bold': True, 'color':'yellow','bg_color':'193b4f', 'align':'center', 'border': 1})
-    # sub_cell_title = wb.add_format({'bold': True, 'color':'#FFFFF','bg_color':'193b4f', 'align':'center', 'border': 1})
-    # dados_body = wb.add_format({'align':'center', 'border': 1}) 
-
-    # locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-    # ws = wb.add_worksheet('{} a {}'.format(start_date.strftime('%b'), end_date.strftime('%b')))
-
-    # alphabet = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ']
-        
 #Execeuta a Funcao 
 if __name__== "__main__":
     # generate_spreadsheet()
     file_path = 'SemanaOperativa/baciasDiaria.xml'
     df = xml2dataframe(file_path)
     so = make_semana_operativa(df)
-    make_xlsx(so)
+    # make_xlsx(so)
 
-
-
-    # make_xlsx(so, today_date, final_date)
