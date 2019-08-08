@@ -114,7 +114,7 @@ def xml2dataframe(xml_file):
     '''
     
     # Open xml file and make a JSON
-    with open('./baciasDiaria.xml') as arquivo:
+    with open(xml_file) as arquivo:
         xml_data = xmltodict.parse(arquivo.read())        
     str_data = json.dumps(xml_data)
     json_data = json.loads(str_data)
@@ -153,48 +153,75 @@ def make_semana_operativa(df):
 
     # if there are less than 7 days on the sum, it returns a NaN, therefore isn't a forecast only data
     semana_operativa.dropna(inplace=True)
-    print (semana_operativa.head(8).T)
+    # print (semana_operativa.head(8))
     return semana_operativa
 
 
-def make_xlsx(df, start_date, end_date):
-    #Cria planilha e formata a celulas 
-    wb = xlsxwriter.Workbook('SemenaOperativa_2.xlsx')
+def make_xlsx(df):
+    '''
+    Creates a crude xlsx with all the data on the right places
+    '''
+    # Creates start and end dates based on the next 3 months
+    today_date = datetime.utcnow() 
+    final_date = today_date + relativedelta(months=3)
+    last_day_of_month = calendar.monthrange(final_date.year, final_date.month)[1]
+    final_date = final_date.replace(day=last_day_of_month)
+
+    # Make the filter of the dataframe
+    start_date = today_date.strftime('%Y-%m-%d')
+    end_date = final_date.strftime('%Y-%m-%d')
+
+    df = df.loc[start_date:end_date]
+
+    # Group all data (Basins and months) in order to make a prettier output. Round numbers and remove ugly cells
+    df.reset_index(inplace=True)
+    df['mes'] = df['date'].dt.month
+    grouped = df.groupby(['bacia', 'mes', 'dataDiaria'])['soma7Dias'].first()
+    grouped = grouped.round(2)
+    grouped.rename_axis(index={'bacia': '', 'mes': '', 'dataDiaria': ''}, inplace=True)
+
+    # Transpose the data and save the file.
+    grouped_t = grouped.unstack(level=[1, 2])
+
+
+    writer = pd.ExcelWriter('SemanaOperativa/output.xlsx', engine ='xlsxwriter')
+
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+    sheet_name = '{} a {}'.format(today_date.strftime('%b'), final_date.strftime('%b'))
+    grouped_t.to_excel(writer, sheet_name=sheet_name)
+    wb = writer.book
+    ws = writer.sheets[sheet_name]
+
     cell_title = wb.add_format({'bold': True, 'color':'yellow','bg_color':'193b4f', 'align':'center', 'border': 1})
     sub_cell_title = wb.add_format({'bold': True, 'color':'#FFFFF','bg_color':'193b4f', 'align':'center', 'border': 1})
     dados_body = wb.add_format({'align':'center', 'border': 1}) 
 
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-    ws = wb.add_worksheet('{} a {}'.format(start_date.strftime('%b'), end_date.strftime('%b')))
+    ws.write('A:A',sub_cell_title)
+    writer.save()
+    # print(grouped_t)
 
-    alphabet = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ']
+def change_sheet_design(xls_file):
+    pass
 
-    for bacia in bacias:
-        #Cria nova linha a partir da 3
-            #Agrupar dados de acordo com bacia
-        for month in dates:
-            # conta numerto de datas no mÊs
-                # Agrupar de acordo com o mês
-                # Count
-            # concatena colunas do XLS
-            ws.merge_range('B1:E1', mes_inicial, cell_title)
-            for date in dates:
-                # Coloca a data na linha 2
-                # coloca o dado na nova linha
+    # # Cria planilha e formata a celulas 
+    # wb = xlsxwriter.Workbook('SemenaOperativa_2.xlsx')
+    # cell_title = wb.add_format({'bold': True, 'color':'yellow','bg_color':'193b4f', 'align':'center', 'border': 1})
+    # sub_cell_title = wb.add_format({'bold': True, 'color':'#FFFFF','bg_color':'193b4f', 'align':'center', 'border': 1})
+    # dados_body = wb.add_format({'align':'center', 'border': 1}) 
 
+    # locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+    # ws = wb.add_worksheet('{} a {}'.format(start_date.strftime('%b'), end_date.strftime('%b')))
+
+    # alphabet = ['ABCDEFGHIJKLMNOPQRSTUVWXYZ']
         
 #Execeuta a Funcao 
 if __name__== "__main__":
     # generate_spreadsheet()
-    file_path = './baciasDiaria.xml'
+    file_path = 'SemanaOperativa/baciasDiaria.xml'
     df = xml2dataframe(file_path)
     so = make_semana_operativa(df)
+    make_xlsx(so)
 
 
-    today_date = datetime.utcnow() 
-    final_date = today_date + relativedelta(months=3)
-    final_date = final_date.replace(day=calendar.monthrange(final_date.year, final_date.month)[1])
 
-    so = so.loc[ today_date.strftime('%Y-%m-%d'):final_date.strftime('%Y-%m-%d')]
-
-    make_xlsx(so, today_date, final_date)
+    # make_xlsx(so, today_date, final_date)
