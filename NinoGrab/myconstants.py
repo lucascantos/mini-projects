@@ -1,5 +1,6 @@
 # -Pega datas pra puxar arquivo do site. Data do mes passado, Hoje e data daqui a 12 meses
 import pandas as pd
+from dateutil.relativedelta import relativedelta
 from pandas.tseries.offsets import MonthEnd
 
 hoje = (pd.to_datetime('today'))
@@ -22,7 +23,7 @@ mes1 = str(mes_quevem.strftime('%m'))
 dia1 = str(mes_quevem.strftime('%d'))
 ano1 = str(mes_quevem.year)
 
-meses9 = (mes_quevem + pd.DateOffset(months=8)) + MonthEnd(1)
+meses9 = (mes_quevem + pd.DateOffset(months=9))
 mes9 = str(meses9.strftime('%m'))
 dia9 = str(meses9.strftime('%d'))
 ano9 = str(meses9.year)

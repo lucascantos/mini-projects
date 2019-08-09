@@ -1,5 +1,5 @@
 import pandas as pd
-from grab_Object import NinoDataframe as ndf
+from grab_Object import NinoDataframe
 import myconstants as const
 
 def grab_observado():
@@ -8,7 +8,7 @@ def grab_observado():
     caminho_observado = 'ftp://ftp.cpc.ncep.noaa.gov/wd52dg/data/indices/sstoi.indices'
     columns_observado = {'ANOM': 'ANOM12', 'ANOM.1': 'ANOM3', 'ANOM.2': 'ANOM4', 'ANOM.3': 'ANOM34'}
 
-    df_observado = ndf(caminho_observado)
+    df_observado = NinoDataframe(caminho_observado)
     df_observado.download_database(previsto=False)
 
     anos = df_observado.df_raw.YR
@@ -26,7 +26,8 @@ def grab_observado():
         'Anoms': ['ANOM12', 'ANOM3', 'ANOM4', 'ANOM34']
     }
     df_observado.media_sasonal(grafico)
-    print(df_observado.df_raw.tail())
+    # print(df_observado.df_raw.tail())
     df_observado.cria_index(ini, fim, df_indexed=df_observado.df_season)
-    print(df_observado.df_season)
+    print(df_observado.df_season.tail())
+    print('Dados observados atualizados.')
     return df_observado

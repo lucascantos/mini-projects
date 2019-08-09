@@ -1,4 +1,4 @@
-from grab_Object import NinoDataframe as ndf
+from grab_Object import NinoDataframe as NinoDataFrame
 import myconstants as const
 
 def nome_arquivo(atributo):
@@ -14,11 +14,11 @@ def grab_mensal():
     caminho_mensal = monthly[0] + arquivo1
     columns_mensal = {'NINO1+2': 'ANOM12', 'NINO3': 'ANOM3', 'NINO4': 'ANOM4', 'NINO3.4': 'ANOM34'}
 
-    df_previsto = ndf(caminho_mensal)
+    df_previsto = NinoDataFrame(caminho_mensal)
     x = df_previsto.download_database()
     if x:
-        print('Arquvio Mensal Baixado com sucesso!')
-    ndf.save_file(df_previsto.df_raw, arquivo1)
+        print('Arquivo Mensal Baixado com sucesso!')
+    NinoDataFrame.save_file(df_previsto.df_raw, arquivo1)
     df_previsto.cria_dataframe(columns_mensal, transpose=True)
     df_previsto.cria_index(const.ano + const.mes, const.anoD + const.mesD)
     return df_previsto
@@ -35,10 +35,10 @@ def grab_sasonal():
 
     columns_season = {'NINO12': 'ANOM12', 'NINO3': 'ANOM3', 'NINO4': 'ANOM4', 'NINO3.4': 'ANOM34'}
 
-    df_sasonal = ndf(caminho_season)
+    df_sasonal = NinoDataFrame(caminho_season)
     x = df_sasonal.download_database()
     if x:
-        print('Arquvio Sasonal Baixado com sucesso!')
+        print('Arquivo Sasonal Baixado com sucesso!')
     df_sasonal.save_file(df_sasonal.df_raw, arquivo2)
     df_sasonal.cria_dataframe(columns_season, transpose=True)
     df_sasonal.df['meses'] = df_sasonal.df.index

@@ -18,7 +18,7 @@ dia = str(Hoje.strftime('%d'))
 ano = str(Hoje.year)
 
 mes_passado = (Hoje - pd.DateOffset(months=1)) + MonthEnd(1)
-print('Usando a data de hoje:', mes_passado)
+print('Mês passado:', mes_passado)
 mesA = str(mes_passado.strftime('%m'))
 diaA = str(mes_passado.strftime('%d'))
 anoA = str(mes_passado.year)
