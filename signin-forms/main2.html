@@ -1,0 +1,52 @@
+<html itemscope itemtype="http://schema.org/Article">
+<head>
+  <!-- BEGIN Pre-requisites -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  </script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+  </script>
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '221662732366-jgvmeb147kqj67bp39m3ih67bruo8ns0.apps.googleusercontent.com',
+          // Scopes to request in addition to 'profile' and 'email'
+          scope: 'https://www.googleapis.com/auth/drive'
+        });
+      });
+    }
+  </script>
+</head>
+<body>
+        <button id="signinButton">Sign in with Google</button>
+        <script>
+          $('#signinButton').click(function() {
+            // signInCallback defined in step 6.
+            auth2.grantOfflineAccess().then(signInCallback);
+          });
+        </script>
+
+        <script>
+            function signInCallback(authResult) {
+                if (authResult['code']) {
+                
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'http://127.0.0.1:5000/home?data='+authResult['code']);
+                    xhr.setRequestHeader('Content-Type', 'application/octet-stream; charset=utf-8');
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.send();
+
+            
+                // Hide the sign-in button now that the user is authorized, for example:
+                $('#signinButton').attr('style', 'display: none');
+            
+                // Send the code to the server
+                console.log(authResult['code'])
+                
+                } else {
+                console.log('vish');
+                }
+            }
+        </script>
+</body>
+</html>

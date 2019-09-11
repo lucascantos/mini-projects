@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <meta name="google-signin-client_id" content="221662732366-jgvmeb147kqj67bp39m3ih67bruo8ns0.apps.googleusercontent.com">
+    </head>
+    <body>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <a href="#" onclick="signOut();">Sign out</a>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+        <script>
+            function onSignIn(googleUser) {
+                var profile = googleUser.getBasicProfile();
+                console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                console.log('Name: ' + profile.getName());
+                console.log('Image URL: ' + profile.getImageUrl());
+                console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+                var id_token = googleUser.getAuthResponse().id_token;
+                console.log(id_token);
+                app_request(id_token);
+                }
+
+            function init() {
+                gapi.load('auth2', function() {
+                    client_id: '221662732366-42i5tc929bmaljajrndblfpn7lmr100o.apps.googleusercontent.com'
+                });
+                }
+        
+            function signOut() {
+                var auth2 = gapi.auth2.getAuthInstance();
+                auth2.signOut().then(function () {
+                    console.log('User signed out.');
+                });
+                }
+
+            function app_request(id_token){
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'http://127.0.0.1:5000/tokeninfo');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send('idtoken='+id_token);
+
+                xhr.onload = function() {
+                    console.log(xhr)
+                    console.log('Signed in as: ' + xhr.responseText);
+                };
+            }
+        </script>
+    </body>
+</html>
