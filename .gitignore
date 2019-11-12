@@ -8,3 +8,5 @@ GoogleAPI/credentials/*
 NinoGrab/ninos_images/*
 CEMADEN/*.csv
 *.png
+
+credentials/
