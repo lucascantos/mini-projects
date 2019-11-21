@@ -16,7 +16,8 @@ def connection(event=None, event_context=None):
         clients_connected(event_context.connectionId, 'remove')
         return success_response
         pass
-def default():
+    
+def default(event=None, context=None):
     pass 
 
 def send_msg (event=None, context=None):
