@@ -1,5 +1,6 @@
 import json
 import boto3
+import base64
 
 success_response = {
         'statusCode': 200,
@@ -25,7 +26,8 @@ def send_msg (event=None, context=None):
     '''
     Pegar todos os IDs e retorn array
     '''
-    client_list='Dgho1fqRIAMCEsA='
+    print(event['requestContext'])
+    client_list=event['requestContext']['connectionId']
     # Enviar para cada um dos ids
     send(event, client_list)
 
@@ -36,16 +38,16 @@ def send (event, client_id):
     body = json.loads(event['body'])
     data = body['data']
 
-    endpoint = f"{event_context['domainName']}/{event_context['stage']}/{client_id}"
+    endpoint = f"https://{event_context['domainName']}/{event_context['stage']}/"
 
-    # session = boto3.session.Session()
+    session = boto3.session.Session()
 
-    # client = session.client(
-    #     service_name='apigatewaymanagementapi',
-    #     endpoint_url='http://localhost:3001/'
-    # )
+    client = session.client(
+        service_name='apigatewaymanagementapi',
+        endpoint_url = endpoint
+    )
 
-    client = boto3.client('apigatewaymanagementapi')
+    # client = boto3.client('apigatewaymanagementapi')
     client.post_to_connection(
         Data=data, 
         ConnectionId=client_id
