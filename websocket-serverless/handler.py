@@ -3,7 +3,7 @@ import boto3
 
 success_response = {
         'statusCode': 200,
-        'body': json.dumps({'message': 'Good!'})
+        'body': 'Good!'
     }
 
 def connection(event=None, event_context=None):
@@ -16,7 +16,7 @@ def connection(event=None, event_context=None):
         clients_connected(event_context.connectionId, 'remove')
         return success_response
         pass
-    
+
 def default(event=None, context=None):
     pass 
 

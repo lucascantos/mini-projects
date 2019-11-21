@@ -75,11 +75,10 @@ functions:
      - websocket: $connect
      - websocket: $disconnect
      
-  default:
-    handler: handler.default
-    events:
-     - websocket: $connect
-     - websocket: $disconnect
+  # default:
+  #   handler: handler.default
+  #   events:
+  #    - websocket: $default
 
   sendMsg:
     handler: handler.send_msg
