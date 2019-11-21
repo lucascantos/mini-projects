@@ -1,26 +1,25 @@
 import json
 import boto3
 import base64
-
-success_response = {
-        'statusCode': 200,
-        'body': 'Good!'
-    }
+from src.helpers.db import clients_connected
+from src.helpers.message import send, success_response
 
 def connection(event=None, context=None):
-    print(event)
     event_context = event['requestContext']
-    print(event_context)
-    print(context)
     if event_context['eventType'] == 'CONNECT':
         clients_connected(event_context['connectionId'], 'add')
         return success_response
     elif event_context['eventType'] == 'DISCONNECT':
         clients_connected(event_context['connectionId'], 'remove')
         return success_response
+    
 
 def default(event=None, context=None):
-    pass 
+    return {
+        'statusCode': 200,
+        'body': 'Default route called!'
+    }
+ 
 
 def send_msg (event=None, context=None):
     '''
@@ -33,31 +32,3 @@ def send_msg (event=None, context=None):
 
     return success_response
 
-def send (event, client_id):
-    event_context = event['requestContext']
-    body = json.loads(event['body'])
-    data = body['data']
-
-    endpoint = f"https://{event_context['domainName']}/{event_context['stage']}/"
-
-    session = boto3.session.Session()
-
-    client = session.client(
-        service_name='apigatewaymanagementapi',
-        endpoint_url = endpoint
-    )
-
-    # client = boto3.client('apigatewaymanagementapi')
-    client.post_to_connection(
-        Data=data, 
-        ConnectionId=client_id
-    )
-
-def clients_connected (client_id, action):
-    action = action.upper()
-    if action == "ADD":
-        pass
-    elif action == 'REMOVE':
-        pass
-    else:
-        print("action must be 'add' or 'remove' ")

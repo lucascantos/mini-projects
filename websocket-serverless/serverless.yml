@@ -32,7 +32,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
-  # S3_BUCKET: ${env:S3_BUCKET}
+  S3_BUCKET: ${env:S3_BUCKET}
   # SNS_TOPIC: ${env:SNS_TOPIC}
 
 # you can overwrite defaults here
@@ -75,10 +75,10 @@ functions:
      - websocket: $connect
      - websocket: $disconnect
      
-  # default:
-  #   handler: handler.default
-  #   events:
-  #    - websocket: $default
+  default:
+    handler: handler.default
+    events:
+     - websocket: $default
 
   sendMsg:
     handler: handler.send_msg
