@@ -12,12 +12,11 @@ def connection(event=None, context=None):
     print(event_context)
     print(context)
     if event_context['eventType'] == 'CONNECT':
-        clients_connected(event_context.connectionId, 'add')
+        clients_connected(event_context['connectionId'], 'add')
         return success_response
     elif event_context['eventType'] == 'DISCONNECT':
-        clients_connected(event_context.connectionId, 'remove')
+        clients_connected(event_context['connectionId'], 'remove')
         return success_response
-        pass
 
 def default(event=None, context=None):
     pass 
@@ -26,7 +25,7 @@ def send_msg (event=None, context=None):
     '''
     Pegar todos os IDs e retorn array
     '''
-    client_list=[]
+    client_list='Dgho1fqRIAMCEsA='
     # Enviar para cada um dos ids
     send(event, client_list)
 
