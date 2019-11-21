@@ -18,3 +18,4 @@ googleapiclient
 opencv-python
 PyPDF2
 httplib2
+boto3

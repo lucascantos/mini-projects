@@ -10,3 +10,8 @@ CEMADEN/*.csv
 *.png
 
 credentials/
+node_modules/
+credentials/
+.serverless/
+.env
+output/*
