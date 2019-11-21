@@ -27,16 +27,17 @@ def read_msg():
         
 read_msg()
 
-def send_msg():
+def send_msg(phone=None, chatid=None):
     data = {
-        'phone': '5511970679442',
+        'phone': chatid, 
         'body': 'Hello Clarice'
     }
     headers = {
         'contentType': 'application/json',
         'type': 'POST'}
     requests.put(send_url, data=json.dumps(data), headers=headers)
-
     print('done')
+
+# send_msg('5511970679442')
 
 

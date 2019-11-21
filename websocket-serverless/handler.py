@@ -3,10 +3,11 @@ import boto3
 
 success_response = {
         'statusCode': 200,
-        'body': 'Good!'
+        'body': json.dumps({'message': 'Good!'})
     }
 
 def connection(event=None, event_context=None):
+    print('Yeehaw')
     event_context = event['requestContext']
     if event_context['eventType'] == 'CONNECT':
         clients_connected(event_context.connectionId, 'add')
@@ -15,12 +16,14 @@ def connection(event=None, event_context=None):
         clients_connected(event_context.connectionId, 'remove')
         return success_response
         pass
+def default():
+    pass 
 
 def send_msg (event=None, context=None):
     '''
     Pegar todos os IDs e retorn array
     '''
-    client_list='1234567890'
+    client_list=[]
     # Enviar para cada um dos ids
     send(event, client_list)
 
