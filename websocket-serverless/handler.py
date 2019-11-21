@@ -6,9 +6,11 @@ success_response = {
         'body': 'Good!'
     }
 
-def connection(event=None, event_context=None):
-    print('Yeehaw')
+def connection(event=None, context=None):
+    print(event)
     event_context = event['requestContext']
+    print(event_context)
+    print(context)
     if event_context['eventType'] == 'CONNECT':
         clients_connected(event_context.connectionId, 'add')
         return success_response
