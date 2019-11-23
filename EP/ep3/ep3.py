@@ -30,6 +30,18 @@ def adiciona_pontos(pontos):
 
 def andar():
     adiciona_pontos(-1)
+    '''
+    0: linha
+    1: coluna
+    '''
+    futuro = []
+    futuro[0] = agente[0] + movimento[0]
+    futuro[1] = agente[1] + movimento[1]
+    if 0 <= futuro[0] <= N-1 or 0 <= futuro[1] <= N-1:
+        agente[0] =  futuro[0]
+        agente[1] =  futuro[1]
+    else:
+        # percepcao = 'C'
 
 def girar(orientacao, acao):
     adiciona_pontos(-1)  
@@ -37,35 +49,47 @@ def girar(orientacao, acao):
     if acao == 'D':
         if orientacao == '>':
             orientacao = 'v'
+            movimento = [1, 0]            
         elif orientacao == 'v':
             orientacao = '<'
+            movimento = [0, -1]   
         elif orientacao == '<':
             orientacao = '^'
+            movimento = [-1, 0] 
         elif orientacao == '^':
             orientacao = '>'
+            movimento = [0, 1]  
     
     elif acao == 'E':
         if orientacao == '>':
             orientacao = '^'
+            movimento = [-1, 0]  
         elif orientacao == 'v':
             orientacao = '>'
+            movimento = [0, 1]  
         elif orientacao == '<':
             orientacao = 'v'
+            movimento = [1, 0]  
         elif orientacao == '^':
             orientacao = '<'
+            movimento = [0, -1]  
     
     agente[2] = orientacao
+    return movimento
 
 
 def pegar_ouro():
-    adiciona_pontos(100)
+    estado[2] = 0
+
 
 def morrer():
     adiciona_pontos(-1000)
 
 def matar_wumpus()
     adiciona_pontos(50)
-    
+
+def atirar_flecha():
+
 
 arquivo = 'entrada.txt'
 N, items = mundo_wumpus(arquivo)
@@ -76,6 +100,9 @@ N, items = mundo_wumpus(arquivo)
 2: orientação de visão
 '''
 agente = [N, 0, '^']
+movimento = [-1, 0]
+
+
 
 '''
 0: Status do monstro
