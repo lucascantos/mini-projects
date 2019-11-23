@@ -22,7 +22,17 @@ def send (event, client_id):
     )
 
 
-success_response = {
+response = {
+    'success': {
         'statusCode': 200,
         'body': 'Good!'
-    }
+    },
+    'failure': {
+        'statusCode': 500,
+        'body': 'Something failed!'
+    },
+    'default': {
+        'statusCode': 200,
+        'body': 'Default route called!'
+    },
+}

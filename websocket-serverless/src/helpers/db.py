@@ -1,5 +1,3 @@
-
-
 def clients_connected (client_id, action):
     action = action.upper()
     if action == "ADD":

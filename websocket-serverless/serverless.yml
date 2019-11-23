@@ -23,6 +23,15 @@ org: lucascantos
 provider:
   name: aws
   runtime: python3.7
+  iamRoleStatements:
+    - Effect: Allow
+        Action:
+          - s3:GetObject
+          - s3:PutObject
+          - s3:HeadObject
+        Resource: 
+          - "arn:aws:s3:::${self:custom.S3_BUCKET}"
+          - "arn:aws:s3:::${self:custom.S3_BUCKET}/*"
 
 plugins:
   - serverless-python-requirements
@@ -60,13 +69,6 @@ custom:
 #    variable1: value1
 
 # you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
 
 functions:
   connectionHandler:
