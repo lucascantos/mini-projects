@@ -1,3 +1,37 @@
+#------------------------------------------
+#Nome: Julianna Freire Caravetto
+#NºUSP: 7699020
+#Versão Python: 3.6.8 64 bits
+#EP3: Caça ao ouro no mundo do Wumpus
+#MAC0115 - Professora Leliane Nunes de Barros
+#------------------------------------------
+'''
+    Ao preencher esse cabeçalho com o meu nome e o meu número USP,
+    declaro que todas as partes originais desse exercício programa (EP)
+    foram desenvolvidas e implementadas por mim e que portanto não
+    constituem desonestidade acadêmica ou plágio.
+    Declaro também que sou responsável por todas as cópias desse
+    programa e que não distribui ou facilitei a sua distribuição.
+    Estou ciente que os casos de plágio e desonestidade acadêmica
+    serão tratados segundo os critérios divulgados na página da
+    disciplina.
+    Entendo que EPs sem assinatura devem receber nota zero e, ainda
+    assim, poderão ser punidos por desonestidade acadêmica.
+
+    Busquei ajuda nos seguintes sites:
+   
+    https://panda.ime.usp.br/aulasPython/static/aulasPython/index.html
+Aulas de Introdução à Computação em Python — Aulas de Introdução à Computação com Python: Edição Interativa - Panda
+Versão interativa das aulas de Introdução à Computação com Python.
+panda.ime.usp.br
+
+    #para informações gerais sobre os novos tópicos vistos em aula.
+
+    A lógica de programação foi feita num caderno, me comprometo a apresentar
+    caso seja necessario.
+
+'''
+
 ## ----- MUNDO
 
 objetos_label = [' ', 'P', 'W', 'O']
@@ -17,7 +51,7 @@ def le_mundo(mundo):
                 if N > 9:
                     print('N deve ser menor do que 9.')
                     return False
-            else: 
+            else:
                 # remove \n no final da linha
                 linha = linha.strip()
                 # separa caracteres pelo separador espaço e devolve uma lista
@@ -40,12 +74,13 @@ def cria_matrix(matrix, N, fill=0):
 
 def outbound(ponto):
     # Checa se o ponto escolhido se encontra dentro do mundo
-    if 0 <= ponto[0] <= N-1 or 0 <= ponto[1] <= N-1:
+    if 0 <= ponto[0] <= N-1 and 0 <= ponto[1] <= N-1:
         return True
     else:
         return False
 
 def imprime_mundo(matrix):
+    # Imprime Mundo para o usuário visualizar
     mapa_impresso=''
     for i in range(N):
         for j in range(N):
@@ -54,20 +89,18 @@ def imprime_mundo(matrix):
         for j in range(N):
             mapa_impresso += '| '+str(objetos_label[matrix[i][j]])+' '
         mapa_impresso += '|\n'
-    
+   
     for j in range(N):
         mapa_impresso += '----'
     print(mapa_impresso)
 
 
-
-
-
 ## PERCEPCOES
 
-percebe_label = ['F', 'B', 'R']
+percebe_label = ['F', 'B', 'R'] # O que o agente sente ao andar pelas salas.
 
 def atualiza_percepcaoEagente(percebe, mundo, acao, agente, estado):
+    # Atualiza percepções e a posição do agente
     acoes(acao)
     check_objetos(mundo)
     text = ''
@@ -77,41 +110,46 @@ def atualiza_percepcaoEagente(percebe, mundo, acao, agente, estado):
 
 
 def check_objetos(mundo):
+    # olhar o que esta na sala atual
     sala = mundo[agente[0]][agente[1]]
-    if sala != 0:
-        if sala == 1 or sala == 2:
+    if sala != 0: # Se a sala não estiver vazia
+        if sala == 1 or sala == 2: # Se na sala tiver um poço ou o Wumpus
             morrer()
-        if sala == 3:
+        if sala == 3: # Se na sala tiver ouro
             percepcao[2] = 1
-            
+           
     check_vizinho([agente[0], agente[1]])
 
 def check_vizinho(ponto):
-    
+    # Percepções em volta:
     n = [ponto[0]-1, ponto[1]]
     s = [ponto[0]-1, ponto[1]]
     l = [ponto[0], ponto[1]+1]
     o = [ponto[0], ponto[1]-1]
 
     vizinhos = [n, s, l, o]
-
     for vizinho in vizinhos:
-        if outbound(vizinho):
+        if outbound(vizinho): # Se local vizinho está dentro da caverna
+            # Ver se percebe algum perigo em volta:
+            print(vizinho)
             if mundo[vizinho[0]][vizinho[1]] == 1:
                 percepcao[1] = 1
             elif mundo[vizinho[0]][vizinho[1]] == 2:
-                percepcao[0] = 1           
+                percepcao[0] = 1          
 
 def imprime_percebe(matrix):
-    
+    # Imprime percepções ao longo do jogo
+    # Para que o usuário se oriente durante a movimentação
+    # Atualiza o mapa durante a movimentação
+   
     mapa_impresso=''
     for i in range(N):
         for j in range(N):
             mapa_impresso += '------'
         mapa_impresso += '\n'
         for j in range(N):
+            if agente[0] == i and agente[1] == j:
 
-            if agente[0] == i and agente [1==j]:
                 texto = agente[2]
             else:
                 texto = ' '
@@ -121,23 +159,23 @@ def imprime_percebe(matrix):
                 if k == '1':
                     texto += percebe_label[index]
                 elif k == '?' or k == ' ':
-                    texto = k 
+                    texto = k
                 index+=1
-
-
+                
             mapa_impresso += '| '+texto+' '
 
         mapa_impresso += '|\n'    
     for j in range(N):
         mapa_impresso += '------'
     print(mapa_impresso)
-            
+           
 
 ## AGENTE
 
 def acoes(comando):
+    # Ações do agente:
     if comando == 'D' or comando =='E':
-        girar(movimento, comando)
+        girar(comando)
     elif comando == 'M':
         mover()
     elif comando == 'T':
@@ -146,16 +184,21 @@ def acoes(comando):
         pegar_ouro()
     elif comando == 'S':
         sair()
+    elif comando is None:
+        pass
+    else:
+        print("comando invalido!")
 
 
 def mover():
+    # Pontuação por mover:
     adiciona_pontos(-1)
     '''
     0: linha
     1: coluna
     '''
+    # Próxima posição:
     futuro = [agente[0], agente[1]]
-    print(agente[0], movimento[0])
     futuro[0] = agente[0] + movimento[0]
     futuro[1] = agente[1] + movimento[1]
     if outbound(futuro):
@@ -164,74 +207,77 @@ def mover():
     else:
         percepcao[3] = 1
 
-def girar(orientacao, acao):
+def girar(acao):
     adiciona_pontos(-1)  
-
+    orientacao = agente[2]
+    # Orientar movimentação
     if acao == 'D':
         if orientacao == '>':
             orientacao = 'v'
-            movimento = [1, 0]            
+            direcao = [1, 0]            
         elif orientacao == 'v':
             orientacao = '<'
-            movimento = [0, -1]   
+            direcao = [0, -1]  
         elif orientacao == '<':
             orientacao = '^'
-            movimento = [-1, 0] 
+            direcao = [-1, 0]
         elif orientacao == '^':
             orientacao = '>'
-            movimento = [0, 1]  
-    
+            direcao = [0, 1]  
+   
     elif acao == 'E':
         if orientacao == '>':
             orientacao = '^'
-            movimento = [-1, 0]  
+            direcao = [-1, 0]  
         elif orientacao == 'v':
             orientacao = '>'
-            movimento = [0, 1]  
+            direcao = [0, 1]  
         elif orientacao == '<':
             orientacao = 'v'
-            movimento = [1, 0]  
+            direcao = [1, 0]  
         elif orientacao == '^':
             orientacao = '<'
-            movimento = [0, -1]  
-    
+            direcao = [0, -1]  
+   
     agente[2] = orientacao
-    return movimento
+    movimento[0] = direcao[0]
+    movimento[1] = direcao[1]
 
 def pegar_ouro():
     # Se o ouro exitir, muda o estado do ouro, se nao perde 1 ponto
     estado[2] = 0
 
 def atirar_flecha():
+    # Verifica se atirou a flecha no local certo (se o Wumpus morre)
     pass
 
 def sair():
-    pass
+    # Orientações para sair da caverna
+    if agente[0]==N and agente[1]==0:
+        game_over()
+    else:
+        adiciona_pontos(-1)
 
 def morrer():
+    # Pontuação após morte
     adiciona_pontos(-10000)
+    game_over()
 
 def matar_wumpus():
+    # Pontuação após matar o Wumpus
     adiciona_pontos(50)
 
 def adiciona_pontos(pontos):
+    # Cálculo dos pontos durante e ao final do jogo
     estado[3] = estado[3] + pontos
+
+def game_over():
+    jogando=False
+    pass
 
 mundo = []
 percebe = []
 percepcao = [0,0,0,0,0]
-N, items = le_mundo(mundo)
-cria_matrix(percebe,N,'?')
-
-'''
-0: posição x
-1: posição y
-2: orientação de visão
-'''
-agente = [N, 0, '^']
-movimento = [-1, 0]
-
-
 
 '''
 0: Status do monstro
@@ -241,8 +287,39 @@ movimento = [-1, 0]
 '''
 estado = [1, 1, 1, 0]
 
-for i in range(3):
-    atualiza_percepcaoEagente(percebe, mundo, 'M', agente, estado) 
+N, items = le_mundo(mundo)
+cria_matrix(percebe,N,'?')
 
-    print(estado[3])
-    imprime_percebe(percebe)
+
+'''
+0: posição x
+1: posição y
+2: orientação de visão
+'''
+agente = [N-1, 0, '^']
+movimento = [-1, 0]
+jogando = True
+
+
+
+def main():
+    # Códigos da função main
+    
+    
+    atualiza_percepcaoEagente(percebe, mundo, '', agente, estado)
+    while jogando:
+
+        imprime_percebe(percebe)
+        acao = input('Digite uma ação: (M/E/D/T/G/S)\n')        
+        atualiza_percepcaoEagente(percebe, mundo, acao.upper(), agente, estado)
+
+   
+
+#fim da função main
+
+
+if __name__== "__main__":   #chama a função main para rodar o EP
+    main()
+
+input() #Ao abrir o EP no Python, só fecha a janela apertando enter.
+#Fim.
