@@ -102,6 +102,7 @@ percebe_label = ['F', 'B', 'R'] # O que o agente sente ao andar pelas salas.
 def atualiza_percepcaoEagente(percebe, mundo, acao, agente, estado):
     # Atualiza percepções e a posição do agente
     acoes(acao)
+    limpa_percepcao()
     check_objetos(mundo)
     text = ''
     for i in percepcao[:3]:
@@ -123,7 +124,7 @@ def check_objetos(mundo):
 def check_vizinho(ponto):
     # Percepções em volta:
     n = [ponto[0]-1, ponto[1]]
-    s = [ponto[0]-1, ponto[1]]
+    s = [ponto[0]+1, ponto[1]]
     l = [ponto[0], ponto[1]+1]
     o = [ponto[0], ponto[1]-1]
 
@@ -131,11 +132,17 @@ def check_vizinho(ponto):
     for vizinho in vizinhos:
         if outbound(vizinho): # Se local vizinho está dentro da caverna
             # Ver se percebe algum perigo em volta:
-            print(vizinho)
             if mundo[vizinho[0]][vizinho[1]] == 1:
                 percepcao[1] = 1
             elif mundo[vizinho[0]][vizinho[1]] == 2:
-                percepcao[0] = 1          
+                percepcao[0] = 1  
+
+def limpa_percepcao():
+    index=0
+    for i in percepcao:
+        percepcao[index] = 0
+        index+=1
+
 
 def imprime_percebe(matrix):
     # Imprime percepções ao longo do jogo
@@ -145,7 +152,7 @@ def imprime_percebe(matrix):
     mapa_impresso=''
     for i in range(N):
         for j in range(N):
-            mapa_impresso += '------'
+            mapa_impresso += '-------'
         mapa_impresso += '\n'
         for j in range(N):
             if agente[0] == i and agente[1] == j:
@@ -158,15 +165,17 @@ def imprime_percebe(matrix):
             for k in data:
                 if k == '1':
                     texto += percebe_label[index]
+                elif k =='0':
+                    texto += ' '
                 elif k == '?' or k == ' ':
-                    texto = k
+                    texto = ' '+k+'  '
                 index+=1
-                
+
             mapa_impresso += '| '+texto+' '
 
         mapa_impresso += '|\n'    
     for j in range(N):
-        mapa_impresso += '------'
+        mapa_impresso += '-------'
     print(mapa_impresso)
            
 
@@ -253,7 +262,7 @@ def atirar_flecha():
 
 def sair():
     # Orientações para sair da caverna
-    if agente[0]==N and agente[1]==0:
+    if agente[0]==N-1 and agente[1]==0:
         game_over()
     else:
         adiciona_pontos(-1)
@@ -272,12 +281,10 @@ def adiciona_pontos(pontos):
     estado[3] = estado[3] + pontos
 
 def game_over():
-    jogando=False
-    pass
+    return False
 
 mundo = []
 percebe = []
-percepcao = [0,0,0,0,0]
 
 '''
 0: Status do monstro
@@ -300,6 +307,7 @@ agente = [N-1, 0, '^']
 movimento = [-1, 0]
 jogando = True
 
+percepcao = [0,0,0,0,0]
 
 
 def main():
@@ -308,9 +316,8 @@ def main():
     
     atualiza_percepcaoEagente(percebe, mundo, '', agente, estado)
     while jogando:
-
         imprime_percebe(percebe)
-        acao = input('Digite uma ação: (M/E/D/T/G/S)\n')        
+        acao = input('Digite uma ação (M/E/D/T/G/S): ')        
         atualiza_percepcaoEagente(percebe, mundo, acao.upper(), agente, estado)
 
    
