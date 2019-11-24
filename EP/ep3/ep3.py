@@ -121,7 +121,7 @@ def check_objetos(mundo):
     # olhar o que esta na sala atual
     sala = mundo[agente[0]][agente[1]]
     if sala != 0: # Se a sala não estiver vazia
-        if sala == 1 or sala == 2: # Se na sala tiver um poço ou o Wumpus
+        if (sala == 1 and estado[0]==1) or sala == 2: # Se na sala tiver um poço ou o Wumpus
             morrer()
         if sala == 3: # Se na sala tiver ouro
             percepcao[2] = 1
@@ -274,6 +274,9 @@ def pegar_ouro():
 
 def atirar_flecha():
     # Verifica se atirou a flecha no local certo (se o Wumpus morre)
+    if estado[1] == 1:
+        estado[1]=0
+        print('Flecha atirada!')
     pass
 
 def sair():
@@ -294,6 +297,7 @@ def morrer():
 
 def matar_wumpus():
     # Pontuação após matar o Wumpus
+    estado[0] = 0
     adiciona_pontos(50)
 
 def adiciona_pontos(pontos):
