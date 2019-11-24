@@ -97,17 +97,22 @@ def imprime_mundo(matrix):
 
 ## PERCEPCOES
 
-percebe_label = ['F', 'B', 'R'] # O que o agente sente ao andar pelas salas.
+percebe_label = ['F', 'B', 'R', 'C', 'U'] # O que o agente sente ao andar pelas salas.
 
 def atualiza_percepcaoEagente(percebe, mundo, acao, agente, estado):
     # Atualiza percepções e a posição do agente
     acoes(acao)
-    limpa_percepcao()
     check_objetos(mundo)
     text = ''
     for i in percepcao[:3]:
        text += str(i)
     percebe[agente[0]][agente[1]] = text
+    
+    ultimo_percebe = limpa_percepcao()
+    print('Percepção após a última ação:')
+    print('['+ultimo_percebe+']')
+    print('Mundo conhecido pelo agente:')
+    imprime_percebe(percebe)
 
 
 def check_objetos(mundo):
@@ -139,9 +144,13 @@ def check_vizinho(ponto):
 
 def limpa_percepcao():
     index=0
+    text = ''
     for i in percepcao:
+        if i == 1:
+            text += percebe_label[index]
         percepcao[index] = 0
         index+=1
+    return text
 
 
 def imprime_percebe(matrix):
@@ -316,7 +325,6 @@ def main():
     
     atualiza_percepcaoEagente(percebe, mundo, '', agente, estado)
     while jogando:
-        imprime_percebe(percebe)
         acao = input('Digite uma ação (M/E/D/T/G/S): ')        
         atualiza_percepcaoEagente(percebe, mundo, acao.upper(), agente, estado)
 
