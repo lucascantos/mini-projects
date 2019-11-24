@@ -109,10 +109,12 @@ def atualiza_percepcaoEagente(percebe, mundo, acao, agente, estado):
     percebe[agente[0]][agente[1]] = text
     
     ultimo_percebe = limpa_percepcao()
-    print('Percepção após a última ação:')
-    print('['+ultimo_percebe+']')
-    print('Mundo conhecido pelo agente:')
-    imprime_percebe(percebe)
+    
+    if agente[2] != 'x' and agente[0] != -1:
+        print('Percepção após a última ação:')
+        print('['+ultimo_percebe+']')
+        print('Mundo conhecido pelo agente:')
+        imprime_percebe(percebe)
 
 
 def check_objetos(mundo):
@@ -278,6 +280,7 @@ def sair():
 
 def morrer():
     # Pontuação após morte
+    agente[2] = 'x'
     adiciona_pontos(-10000)
     game_over()
 
@@ -290,13 +293,19 @@ def adiciona_pontos(pontos):
     estado[3] = estado[3] + pontos
 
 def game_over():
+    agente[0] = -1
     print('Mundo Completo:')
     imprime_mundo(mundo)    
-    print('Fim de Jogo! Pontuação final: '+estado[3])
+    print('Fim de Jogo! Pontuação final: '+str(estado[3]))
     return False
 
 mundo = []
 percebe = []
+
+
+N, items = le_mundo(mundo)
+cria_matrix(percebe,N,'?')
+
 
 '''
 0: Status do monstro
@@ -306,10 +315,6 @@ percebe = []
 '''
 estado = [1, 1, 1, 0]
 
-N, items = le_mundo(mundo)
-cria_matrix(percebe,N,'?')
-
-
 '''
 0: posição x
 1: posição y
@@ -317,7 +322,6 @@ cria_matrix(percebe,N,'?')
 '''
 agente = [N-1, 0, '^']
 movimento = [-1, 0]
-jogando = True
 
 percepcao = [0,0,0,0,0]
 
@@ -327,7 +331,8 @@ def main():
     
     
     atualiza_percepcaoEagente(percebe, mundo, '', agente, estado)
-    while jogando:
+    while agente[2] != 'x' and agente[0] != -1:
+        print(agente[2], agente[0])
         acao = input('Digite uma ação (M/E/D/T/G/S): ')        
         atualiza_percepcaoEagente(percebe, mundo, acao.upper(), agente, estado)
 
