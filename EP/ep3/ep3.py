@@ -121,7 +121,7 @@ def check_objetos(mundo):
     # olhar o que esta na sala atual
     sala = mundo[agente[0]][agente[1]]
     if sala != 0: # Se a sala não estiver vazia
-        if (sala == 1 and estado[0]==1) or sala == 2: # Se na sala tiver um poço ou o Wumpus
+        if sala == 1 or (sala == 2 and estado[0]==1): # Se na sala tiver um poço ou o Wumpus
             morrer()
         if sala == 3: # Se na sala tiver ouro
             percepcao[2] = 1
@@ -265,7 +265,8 @@ def girar(acao):
 
 def pegar_ouro():
     # Se o ouro exitir, muda o estado do ouro, se nao perde 1 ponto
-    if estado[2] == 1 and percepcao[2] == 1:
+    print(estado)
+    if estado[2] == 1 and mundo[agente[0]][agente[1]] == 3:
         print('Kaching!')
         estado[2] = 0
     else:
@@ -277,7 +278,18 @@ def atirar_flecha():
     if estado[1] == 1:
         estado[1]=0
         print('Flecha atirada!')
-    pass
+        flecha = [-1,-1]
+        for i in range(N):
+            flecha[0] = agente[0] + movimento[0]*i
+            flecha[1] = agente[1] + movimento[1]*i
+            if outbound(flecha):
+                if mundo[flecha[0]][flecha[1]] == 2:
+                    matar_wumpus()
+                    return
+            else:
+                return
+
+
 
 def sair():
     # Orientações para sair da caverna
@@ -298,6 +310,8 @@ def morrer():
 def matar_wumpus():
     # Pontuação após matar o Wumpus
     estado[0] = 0
+    percepcao[4] = 1
+    print(estado, percepcao)
     adiciona_pontos(50)
 
 def adiciona_pontos(pontos):
@@ -334,6 +348,13 @@ estado = [1, 1, 1, 0]
 agente = [N-1, 0, '^']
 movimento = [-1, 0]
 
+'''
+0: Fedor
+1: Brisa
+2: Reluzente do Ouro
+3: Crash na parede
+4: Urro
+'''
 percepcao = [0,0,0,0,0]
 
 
