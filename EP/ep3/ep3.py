@@ -275,8 +275,8 @@ def pegar_ouro():
 
 def atirar_flecha():
     # Verifica se atirou a flecha no local certo (se o Wumpus morre)
-    if estado[1] == 1:
-        estado[1]=0
+    if estado[1] > 0:
+        estado[1] -= 1
         print('Flecha atirada!')
         flecha = [-1,-1]
         for i in range(N):
@@ -288,6 +288,8 @@ def atirar_flecha():
                     return
             else:
                 return
+    else:
+        print('Sem flechas')
 
 
 
