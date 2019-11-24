@@ -290,6 +290,9 @@ def adiciona_pontos(pontos):
     estado[3] = estado[3] + pontos
 
 def game_over():
+    print('Mundo Completo:')
+    imprime_mundo(mundo)    
+    print('Fim de Jogo! Pontuação final: '+estado[3])
     return False
 
 mundo = []
