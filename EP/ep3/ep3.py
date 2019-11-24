@@ -40,7 +40,7 @@ def le_mundo(mundo):
     # Abre o arquivo de entrada localizado na mesma pasta do programa.
     # Cria um mundo e preenche ele com os objetos tipo Wumpus e Poços
     file = 'entrada.txt'
-    with open(file, 'r', encoding='utf-8') as f:
+    with open(file, 'r') as f:
         items = []
         index = 0
         for linha in f:
@@ -204,10 +204,10 @@ def acoes(comando):
         pegar_ouro()
     elif comando == 'S':
         sair()
-    elif comando is None:
+    elif comando == '':
         pass
     else:
-        print("comando invalido!")
+        print("Comando invalido!")
 
 
 def mover():
@@ -265,7 +265,12 @@ def girar(acao):
 
 def pegar_ouro():
     # Se o ouro exitir, muda o estado do ouro, se nao perde 1 ponto
-    estado[2] = 0
+    if estado[2] == 1 and percepcao[2] == 1:
+        print('Kaching!')
+        estado[2] = 0
+    else:
+        print('Sem ouro por aqui.')
+        adiciona_pontos(-1)
 
 def atirar_flecha():
     # Verifica se atirou a flecha no local certo (se o Wumpus morre)
@@ -276,10 +281,13 @@ def sair():
     if agente[0]==N-1 and agente[1]==0:
         game_over()
     else:
+        print('Não há saida nesta sala')
         adiciona_pontos(-1)
 
 def morrer():
     # Pontuação após morte
+    
+    print('AAAHHH...O agente morreu!')
     agente[2] = 'x'
     adiciona_pontos(-10000)
     game_over()
@@ -293,6 +301,8 @@ def adiciona_pontos(pontos):
     estado[3] = estado[3] + pontos
 
 def game_over():
+    if estado[2] == 0:
+        adiciona_pontos(100)
     agente[0] = -1
     print('Mundo Completo:')
     imprime_mundo(mundo)    
@@ -302,11 +312,8 @@ def game_over():
 mundo = []
 percebe = []
 
-
 N, items = le_mundo(mundo)
 cria_matrix(percebe,N,'?')
-
-
 '''
 0: Status do monstro
 1: Status da flecha
@@ -332,7 +339,6 @@ def main():
     
     atualiza_percepcaoEagente(percebe, mundo, '', agente, estado)
     while agente[2] != 'x' and agente[0] != -1:
-        print(agente[2], agente[0])
         acao = input('Digite uma ação (M/E/D/T/G/S): ')        
         atualiza_percepcaoEagente(percebe, mundo, acao.upper(), agente, estado)
 
