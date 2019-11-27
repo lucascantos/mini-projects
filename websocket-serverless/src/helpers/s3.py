@@ -12,7 +12,6 @@ def s3_upload(data):
     s3 = boto3.client('s3')
     s3.put_object(Bucket=BUCKETNAME, Key=filepath, Body=json.dumps(data))
     print('File sent to Bucket')
-    return (filepath)
 
 def s3_download(filepath="clients_connected.json"):
     ''' Faz download de arquivo para o buket s3 '''
@@ -20,9 +19,6 @@ def s3_download(filepath="clients_connected.json"):
     s3 = boto3.client('s3')
     file_object = s3.get_object(Bucket=BUCKETNAME, Key=filepath) 
     filedata = file_object['Body'].read()
-    print(filedata)
     content = json.loads(filedata)
-    print(content)
-
     return content
 

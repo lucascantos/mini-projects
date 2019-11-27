@@ -292,7 +292,6 @@ def atirar_flecha():
         print('Sem flechas')
 
 
-
 def sair():
     # Orientações para sair da caverna
     if agente[0]==N-1 and agente[1]==0:
