@@ -9,13 +9,14 @@ def clients_connected (client_id, action):
         }
 
     client_list = client_data['connected']
-    
+
     action = action.upper()
     if action == "ADD":
+        print(f'Adding {client_id}')
         client_list.append(client_id)
     elif action == 'REMOVE':
+        print(f'Removing {client_id}')
         client_list.remove(client_id)
     else:
         print("action must be 'add' or 'remove' ")
-
     s3.s3_upload(client_data)

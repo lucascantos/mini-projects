@@ -18,9 +18,7 @@ def default(event=None, context=None):
     send(event, client_list)
     return response['default']
  
-
 def broadcast (event=None, context=None):
-
     '''
     Pegar todos os IDs e retorn array
     # {"action":"sendMessage", "data":"Hello World"}
