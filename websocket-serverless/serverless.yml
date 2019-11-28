@@ -83,7 +83,7 @@ functions:
      - websocket: $default
 
   sendMsg:
-    handler: handler.send_msg
+    handler: handler.broadcast
     events:
       - websocket:
           route: sendMessage

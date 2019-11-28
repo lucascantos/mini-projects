@@ -1,12 +1,16 @@
 
 import json
 import boto3
+from src.helpers.db import clients_connected
 
 def send (event, client_list):
     event_context = event['requestContext']
-    body = json.loads(event['body'])
-    data = body['data']
-
+    sender = event_context['connectionId']
+    if event_context['routeKey']=='$default':
+        message = f"{sender}: {event['body']}"
+    else:
+        body = json.loads(event['body'])
+        message = f"{sender}: {body['data']}"
     endpoint = f"https://{event_context['domainName']}/{event_context['stage']}/"
 
     session = boto3.session.Session()
@@ -18,11 +22,16 @@ def send (event, client_list):
         client_list = [client_list]
     
     for client_id in client_list:
-        client.post_to_connection(
-            Data=data, 
-            ConnectionId=client_id
-        )
-
+        if client_id != sender:
+            try:
+                client.post_to_connection(
+                    Data=message, 
+                    ConnectionId=client_id
+                    )
+            except:
+                print(f'Invalid client_id! Disconeccting: {client_id}')
+                clients_connected(client_id, 'REMOVE')
+                
 
 response = {
     'success': {

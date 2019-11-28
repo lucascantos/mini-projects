@@ -9,6 +9,7 @@ def clients_connected (client_id, action):
         }
 
     client_list = client_data['connected']
+    
     action = action.upper()
     if action == "ADD":
         client_list.append(client_id)

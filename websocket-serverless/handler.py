@@ -13,14 +13,19 @@ def connection(event=None, context=None):
     
 
 def default(event=None, context=None):
+    # print(event)
+    client_list = s3_download()['connected']
+    send(event, client_list)
     return response['default']
  
 
 def broadcast (event=None, context=None):
+
     '''
     Pegar todos os IDs e retorn array
+    # {"action":"sendMessage", "data":"Hello World"}
+
     '''
-    print(event['requestContext'])
     # client_list=event['requestContext']['connectionId']
     client_list = s3_download()['connected']
     send(event, client_list)
