@@ -20,9 +20,6 @@ def s3_download(filepath="clients_connected.json"):
     s3 = boto3.client('s3')
     file_object = s3.get_object(Bucket=BUCKETNAME, Key=filepath) 
     filedata = file_object['Body'].read()
-    print(filedata)
     content = json.loads(filedata)
-    print(content)
-
     return content
 
