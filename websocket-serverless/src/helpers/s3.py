@@ -12,7 +12,6 @@ def s3_upload(data):
     s3 = boto3.client('s3')
     s3.put_object(Bucket=BUCKETNAME, Key=filepath, Body=json.dumps(data))
     print('File sent to Bucket')
-    return (filepath)
 
 def s3_download(filepath="clients_connected.json"):
     ''' Faz download de arquivo para o buket s3 '''
