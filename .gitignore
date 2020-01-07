@@ -14,4 +14,5 @@ node_modules/
 credentials/
 .serverless/
 .env
-output/*
+output/
+inputs/

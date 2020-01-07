@@ -1,9 +1,10 @@
-
+from src.main import telegram_bot
 def send_message(event, context=None):
     new_bot = telegram_bot()
     new_bot.send_message(message, client)
 
 def clients_update(event, context=None):
+    name = event['']
     new_bot = telegram_bot(name)
     new_bot.clients_update()
 
