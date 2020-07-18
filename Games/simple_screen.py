@@ -15,6 +15,15 @@ class InteractiveScreen:
         self.toggle_run =True
         self.elements = []
         pygame.display.set_caption(self.title)
+    
+    def render(self):
+        self.screen.fill((0,0,0))
+        for element in self.elements:
+            if isinstance(element, Rectangle):
+                pygame.draw.rect(self.screen, element.color, element.shape)
+            else:
+                continue
+                self.screen.blit(element)
 
     def run(self):
         for event in pygame.event.get():
@@ -30,14 +39,13 @@ class InteractiveScreen:
             out = -1
         if keys[pygame.K_e]:
             out =  1
+        # Input
 
-        self.screen.fill((0,0,0))
-        for element in self.elements:
-            if isinstance(element, Rectangle):
-                pygame.draw.rect(self.screen, element.color, element.shape)
-            else:
-                continue
-                self.screen.blit(element)
+        # Update
+
+        # Render 
+        self.render()
+
         pygame.display.update()
         # print("Tick")
         self.clock.tick(60)
