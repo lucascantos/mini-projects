@@ -4,15 +4,14 @@ import math
 from matplotlib import pyplot as plt
 from decorators import timeit
 class PerlinNoise:
-    def __init__(self, shape, res_pwr, value=0, offset=[0,0]):
+    def __init__(self, shape, res_pwr, zoom_value=0, offset=[1,1]):
         self.shape = shape
         self.res_pwr = res_pwr
         self.offset = offset
-        self.value = value
+        self.value = zoom_value
 
         self.set_resolution()
         self.set_zoom()
-        self.set_noise()
         
 
     def get_resolution(self):
@@ -40,16 +39,22 @@ class PerlinNoise:
             
         def random_array():
             import random
-            for x in range(self.zoom+1):
-                for y in range(self.zoom+1):
+            step = self.zoom+1
+            full_range = [
+                np.linspace(self.offset[0]-(self.zoom/2), self.offset[0]+(self.zoom/2), step),
+                np.linspace(self.offset[1]-(self.zoom/2), self.offset[1]+(self.zoom/2), step)
+            ]
+            for x in full_range[0]:
+                for y in full_range[1]:
                     s = (2**self.res_pwr)*(x+self.offset[0])+(y+self.offset[1])
                     random.seed(s)
                     yield random.random()      
 
+        zoom = self.zoom
 
-        delta = (self.zoom / self.shape[0], self.zoom / self.shape[1])
-        d = (self.shape[0] // self.zoom, self.shape[1] // self.zoom)
-        grid = np.mgrid[0:self.zoom:delta[0],0:self.zoom:delta[1]].transpose(1, 2, 0) % 1
+        delta = (zoom / self.shape[0], zoom / self.shape[1])
+        d = (self.shape[0] // zoom, self.shape[1] // zoom)
+        grid = np.mgrid[0:zoom:delta[0],0:zoom:delta[1]].transpose(1, 2, 0) % 1
     
         # Gradients
         # if seed:
@@ -57,9 +62,10 @@ class PerlinNoise:
         #     random_numbers = np.random.rand(self.zoom+1, self.zoom+1)
         # else:                
         random_numbers = list(random_array())
-        random_numbers = np.reshape(random_numbers, (1+self.zoom, 1+self.zoom))
         
-        print(random_numbers.shape)
+        random_numbers = np.reshape(random_numbers, (zoom+1, zoom+1))
+        
+        # print(random_numbers.shape)
         angles = 2*np.pi*random_numbers
         gradients = np.dstack((np.cos(angles), np.sin(angles)))
         g00 = gradients[0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1)
@@ -79,27 +85,34 @@ class PerlinNoise:
         n1 = n01*(1-t[:,:,0]) + t[:,:,0]*n11
         return np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
 
-
-    def fractal(self, octaves=1, persistence=0.5,seed=10):
+    @timeit
+    def fractal(self, octaves=1, persistence=0.5):
         noise = np.zeros(self.shape)
         frequency = 1
         amplitude = 1
         for _ in range(octaves):
-            print (amplitude)
+            # print(self.value)
+            noise += amplitude * self.generate_perlin_noise_2d()
             frequency *= 2
             self.value -=1
             self.set_zoom()
-            print(self.zoom)
             amplitude *= persistence
-            noise += amplitude * self.generate_perlin_noise_2d()
-        return noise+self.noise
+        
+        self.value += octaves
+        self.set_zoom()
+        return noise
 
-    def normalized(self, array=None):
+    def normalized (self, array=None):
         if array is None:
             array = self.noise
         x_min = np.amin(array)
         x_max = np.amax(array)
         return (array - x_min)/(x_max-x_min)
+
+    def squared(self, array=None):
+        if array is None:
+            array = self.noise
+        return np.sqrt(array * array)
 
     def sinoid(self,x,f):
         return (2.0*(1-math.cos(x*3.1415/(f))))
