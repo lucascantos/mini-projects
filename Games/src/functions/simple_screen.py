@@ -1,6 +1,6 @@
 import pygame
 from pygame import Vector3, Vector2
-from helpers import round_vector
+from src.helpers.helpers import round_vector
 
 class InteractiveScreen:
     def __init__(self, title="Default"):
@@ -17,12 +17,14 @@ class InteractiveScreen:
     
     def render(self, elements):
         self.screen.fill((0,0,0))
-        for element in elements:
-            if isinstance(element, Rectangle):
-                pygame.draw.rect(self.screen, element.color, element.shape)
-            else:
-                continue
-                self.screen.blit(element)
+        all_sprites = pygame.sprite.RenderPlain(elements)
+        all_sprites.draw(self.screen)
+        # for element in elements:
+        #     if isinstance(element, Rectangle):
+        #         pygame.draw.rect(self.screen, element.color, element.shape)
+        #     else:
+        #         continue
+        #         self.screen.blit(element)
 
     def run(self):
         

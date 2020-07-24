@@ -1,14 +1,19 @@
 import pygame
 from pygame import Vector2
+
+from src.functions.sprite_sheet import spritesheet
 # from game_objects.character import Head
 class GameObject(pygame.sprite.Sprite):
     def __init__(self, canvas_size, position):
         pygame.sprite.Sprite.__init__(self)
         self.canvas = pygame.Rect(Vector2(), canvas_size) # Square to be draw uppon
-        self.canvas.center = self.position
-        self.collision_box = None # Lista de masks
+        self.canvas.center = self.position # Adjust position to be center
+        self.collision_box = None # List of masks to be applied
+
+        self.animations = {} # Animations of object
+        self.state = 'idle'
+        self.image_index = 0 # Current frame index
         self.image = None # Current frame to show
-        self.animations = {}
 
     @property
     def position(self):
@@ -22,42 +27,63 @@ class GameObject(pygame.sprite.Sprite):
     def height(self):
         return self.canvas.get_height()
 
-    def make_animations(self, animation_info):
-        output = {}
+    def make_animations(self, animation_info, directions):
+        animation_sheet = []
         if animation_info['type'] == 'sheet':
-            get_image = lambda x: x
+            x,y = animation_info['size']
+            for row in range(directions):
+                single_frame = pygame.Rect([0,y*row], [x,y])
+                ss = spritesheet(animation_info['file'])
+                animation_sheet.append(ss.load_strip(single_frame, 6))
+
         elif animation_info['type'] == 'files':
             pass
 
-        for name, value in animation_info.items():
-            if value is None:
-                
-                output[name]: pygame.image.load(img_loc).convert()
-
+        output = {}
+        for name, value in animation_info['actions'].items():   
+            all_dir = []          
+            if value['duration'] is None:       
+                all_dir = [ [animation_sheet[d][value['frame']]] for d in range(directions)]
+            else:
+                for d in range(directions):
+                    single_dir = []
+                    for frame, duration in zip(value['frame'], value['duration']):
+                        single_dir += [animation_sheet[d][frame] for _ in range(duration)]
+                    if value['rock']:
+                        upper_bound = len(single_dir)-(1*value['duration'][-1])
+                        lower_bound = value['duration'][0]
+                        single_dir += [ single_dir[i] for i in range(upper_bound, lower_bound,-1)]
+                    all_dir.append(single_dir)
+            output[name] = all_dir
+        return output
 class Resources(GameObject):
     pass
 
 class Character(GameObject):
-    def __init__(self, position):
-        from animations import character
+    def __init__(self, position, graphics):
         super().__init__(Vector2(32,32),position) 
-        top_center = self.canvas.center
+        top_center = Vector2(self.canvas.center)
         top_center.y /= 2
         top_center -= top_center / 2
 
-        bot_center = self.canvas.center
+        bot_center = Vector2(self.canvas.center)
         bot_center.y *= 1.5
         bot_center -= bot_center / 2
 
         self.collision_box = [
-            pygame.Rect(top_center,  self.canvas / 2 ),
-            pygame.Rect(bot_center,  self.canvas / 2 )
+            pygame.Rect(top_center,  Vector2(self.canvas.size) / 2 ),
+            pygame.Rect(bot_center,  Vector2(self.canvas.size) / 2 )
         ]
-        # self.head = Head()
+        self.animations = self.make_animations(graphics, 4)
 
-        self.animations = self.make_animations(character)
-
-
+    def update(self, frame, direction):
+        if self.state == ('idle' or 'walk'):
+            if len(self.animations[self.state][direction]) <= self.image_index:
+                self.image_index = 0
+            self.image = self.animations[self.state][direction][self.image_index]
+            self.rect = self.image.get_rect()
+        else:
+            pass
 
     def move(self, position):
         # check if bottom collision is true

@@ -2,7 +2,7 @@
 import numpy as np
 import math
 from matplotlib import pyplot as plt
-from decorators import timeit
+from src.helpers.decorators import timeit
 class PerlinNoise:
     def __init__(self, size, res_pwr, zoom_value=0, offset=[0,0], seed=None):
         self.size = size
