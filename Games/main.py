@@ -1,8 +1,8 @@
 def main():
-    from configs.perlin_map import size, res, octave, p
-    from simple_screen import InteractiveScreen, Rectangle
-    from configs.color_map import height
-    from map_generator import PerlinNoise
+    from src.configs.perlin_map import size, res, octave, p
+    from src.functions.simple_screen import InteractiveScreen, Rectangle
+    from src.configs.color_map import height
+    from src.functions.map_generator import PerlinNoise
     from pygame import Vector2, Vector3
     import pygame
 
