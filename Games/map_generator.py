@@ -4,11 +4,14 @@ import math
 from matplotlib import pyplot as plt
 from decorators import timeit
 class PerlinNoise:
-    def __init__(self, shape, res_pwr, zoom_value=0, offset=[1,1]):
-        self.shape = shape
+    def __init__(self, size, res_pwr, zoom_value=0, offset=[0,0], seed=None):
+        self.size = size
         self.res_pwr = res_pwr
         self.offset = offset
-        self.value = zoom_value
+        if zoom_value != 0:
+            self.value = zoom_value
+        else:
+            self.value = self.res_pwr-1
 
         self.set_resolution()
         self.set_zoom()
@@ -48,12 +51,12 @@ class PerlinNoise:
                 for y in full_range[1]:
                     s = (2**self.res_pwr)*(x+self.offset[0])+(y+self.offset[1])
                     random.seed(s)
-                    yield random.random()      
+                    yield round(random.random(),1)
 
         zoom = self.zoom
 
-        delta = (zoom / self.shape[0], zoom / self.shape[1])
-        d = (self.shape[0] // zoom, self.shape[1] // zoom)
+        delta = (zoom / self.size, zoom / self.size)
+        d = (self.size // zoom, self.size // zoom)
         grid = np.mgrid[0:zoom:delta[0],0:zoom:delta[1]].transpose(1, 2, 0) % 1
     
         # Gradients
@@ -87,7 +90,7 @@ class PerlinNoise:
 
     @timeit
     def fractal(self, octaves=1, persistence=0.5):
-        noise = np.zeros(self.shape)
+        noise = np.zeros([self.size, self.size])
         frequency = 1
         amplitude = 1
         for _ in range(octaves):
@@ -114,5 +117,32 @@ class PerlinNoise:
             array = self.noise
         return np.sqrt(array * array)
 
-    def sinoid(self,x,f):
-        return (2.0*(1-math.cos(x*3.1415/(f))))
+    def sinoid(self):
+        f = self.size/2
+        bell = lambda x: (2.0*(1-math.cos(x*3.1415/(f))))
+        
+        continuous = np.linspace(0, self.size, self.size)
+        a = list(map(bell, continuous))
+        island = np.stack((a, a))
+        print(island.shape)
+        return island
+
+
+
+if __name__ == "__main__":
+    from pygame import Vector2
+    octave = 3
+    max_res = 8
+    size = 1024
+    
+    offset = Vector2(-4,-3.5)
+
+    # Make Terrain
+    perlin = PerlinNoise(size, max_res)
+    perlin.offset = offset
+    perlin.value = 7
+    perlin.set_zoom()
+    pln = perlin.normalized(perlin.fractal(octave))
+
+    # Make Resources
+

@@ -6,16 +6,15 @@ def main():
     from pygame import Vector2, Vector3
     import pygame
 
+    octave = 3
     max_res = 9
-    octave = 1
     size = 128
     s = 4
     
-    perlin = PerlinNoise([size,size], max_res, zoom_value=max_res-1)
+    perlin = PerlinNoise(size, max_res, seed=10)
     new_screen = InteractiveScreen()
 
-    offset = Vector2()
-    zoom_level = 0
+    perlin.offset = Vector2(-4,-3.5)
     while new_screen.toggle_run:
 
         # Input
@@ -43,26 +42,26 @@ def main():
         # Update
         if zoom_level != 0 :
             perlin.value += zoom_level
-            if max_res-1 >= perlin.value > octave:
+            if max_res-1 >= perlin.value >= octave:
+                print(max_res-1, perlin.value, octave)
                 perlin.set_zoom()
             else:
                 perlin.value -= zoom_level
 
         if offset != Vector2():
             perlin.offset += offset/2
-
         pln = perlin.normalized(perlin.fractal(octave))
 
         # Render 
         elements = []
         for x in range(0,size):
             for y in range(0,size):
-                color = pln[x][y] * Vector3(0,255,0)
+                color = pln[x][y] * Vector3(255,255,255)
                 for h, color in height.items():
                     if pln[x][y]<=h:
                         break
                 elements.append(Rectangle(Vector2(x,y)*s, Vector2(1,1)*s, color))
-               
+        print(perlin.offset, perlin.value)
         new_screen.render(elements)
         new_screen.run()
 
