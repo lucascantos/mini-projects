@@ -1,5 +1,5 @@
 
-martha = { # Frames are columns of sheet
+martha_a = { # Frames are columns of sheet
     'file': 'src/assets/Martha.png',
     'type': 'sheet',
     'size': [32,32],

@@ -2,7 +2,7 @@
 import numpy as np
 import math
 from matplotlib import pyplot as plt
-from src.helpers.decorators import timeit
+# from src.helpers.decorators import timeit
 class PerlinNoise:
     def __init__(self, size, res_pwr, zoom_value=0, offset=[0,0], seed=None):
         self.size = size
@@ -88,7 +88,7 @@ class PerlinNoise:
         n1 = n01*(1-t[:,:,0]) + t[:,:,0]*n11
         return np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
 
-    @timeit
+    # @timeit
     def fractal(self, octaves=1, persistence=0.5):
         noise = np.zeros([self.size, self.size])
         frequency = 1
@@ -117,20 +117,33 @@ class PerlinNoise:
             array = self.noise
         return np.sqrt(array * array)
 
-    def sinoid(self):
+    def sigmoid(self, threshold = 12, smooth = 1):
         f = self.size/2
-        bell = lambda x: (2.0*(1-math.cos(x*3.1415/(f))))
+        # bell = lambda x: 2.0*(1-math.cos(x*3.1415/(f))) if self.size*1/8 >= x or x >= self.size*7/8 else 1
+        def bell(x):
+            if x <= self.size / 2:
+                k = self.size * (1 / threshold)
+                signal = 1
+            elif x >= self.size / 2:
+                k = self.size*(1-1/threshold)
+                signal = -1
+            a = smooth
+            a *= signal
+            return round(1/(1+math.exp(-a*x + a* k)),2)
         
         continuous = np.linspace(0, self.size, self.size)
         a = list(map(bell, continuous))
-        island = np.stack((a, a))
-        print(island.shape)
-        return island
+        print(np.amax(a))
+        print(np.amin(a))
+        b = np.array(a).reshape((len(a), 1))
+        c = np.array(a).reshape((1, len(a)))
+        return self.normalized(b*c)
 
 
 
 if __name__ == "__main__":
     from pygame import Vector2
+    import matplotlib.pyplot as plt
     octave = 3
     max_res = 8
     size = 1024
@@ -142,7 +155,14 @@ if __name__ == "__main__":
     perlin.offset = offset
     perlin.value = 7
     perlin.set_zoom()
-    pln = perlin.normalized(perlin.fractal(octave))
+    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid()
+    print(pln.shape)
 
+
+    fig, ax = plt.subplots()
+
+    im = ax.imshow(pln, interpolation='bilinear',
+                origin='lower', extent=[-3, 3, -3, 3],)
+    plt.show()
     # Make Resources
 

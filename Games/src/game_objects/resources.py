@@ -75,15 +75,23 @@ class Character(GameObject):
             pygame.Rect(bot_center,  Vector2(self.canvas.size) / 2 )
         ]
         self.animations = self.make_animations(graphics, 4)
+        self.look_dir = 0
 
-    def update(self, frame, direction):
-        if self.state == ('idle' or 'walk'):
-            if len(self.animations[self.state][direction]) <= self.image_index:
-                self.image_index = 0
-            self.image = self.animations[self.state][direction][self.image_index]
+    def update(self):
+        if len(self.animations[self.state][self.look_dir])-1 <= self.image_index:
+            self.image_index = 0
+        else:
+            self.image_index += 1
+
+        if self.state == 'idle' or self.state == 'walk':
+            self.image = self.animations[self.state][self.look_dir][self.image_index]
             self.rect = self.image.get_rect()
         else:
-            pass
+            self.image = self.animations[self.state][self.look_dir][self.image_index]
+            self.rect = self.image.get_rect()
+            if len(self.animations[self.state][self.look_dir])-1 <= self.image_index:
+                self.state = 'idle'
+
 
     def move(self, position):
         # check if bottom collision is true
