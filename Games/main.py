@@ -79,6 +79,7 @@ def main():
 
         if offset != Vector2():
             perlin.offset += offset/2
+        print(perlin.offset)
         pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=16, smooth=.4)
 
         

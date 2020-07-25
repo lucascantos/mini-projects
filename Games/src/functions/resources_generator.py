@@ -1,3 +1,6 @@
 from map_generator import PerlinNoise
-class Resources():
+class Trees():
+    pass
+
+class Rocks():
     pass

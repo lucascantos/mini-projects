@@ -9,12 +9,11 @@ class PerlinNoise:
         self.res_pwr = res_pwr
         self.offset = offset
         if zoom_value != 0:
-            self.value = zoom_value
+            self.zoom = zoom_value
         else:
-            self.value = self.res_pwr-1
+            self.zoom = self.res_pwr-1
 
         self.set_resolution()
-        self.set_zoom()
         
 
     def get_resolution(self):
@@ -25,7 +24,8 @@ class PerlinNoise:
 
     def get_zoom(self):
         return self._zoom
-    def set_zoom(self):
+    def set_zoom(self, value):
+        self.value = value
         self._zoom = 2**(self.res_pwr-self.value)
     zoom = property(get_zoom, set_zoom)
 
@@ -94,15 +94,11 @@ class PerlinNoise:
         frequency = 1
         amplitude = 1
         for _ in range(octaves):
-            # print(self.value)
             noise += amplitude * self.generate_perlin_noise_2d()
             frequency *= 2
-            self.value -=1
-            self.set_zoom()
+            self.zoom = self.value - 1
             amplitude *= persistence
-        
-        self.value += octaves
-        self.set_zoom()
+        self.zoom = self.value + octaves
         return noise
 
     def normalized (self, array=None):
@@ -133,8 +129,6 @@ class PerlinNoise:
         
         continuous = np.linspace(0, self.size, self.size)
         a = list(map(bell, continuous))
-        print(np.amax(a))
-        print(np.amin(a))
         b = np.array(a).reshape((len(a), 1))
         c = np.array(a).reshape((1, len(a)))
         return self.normalized(b*c)
@@ -145,24 +139,54 @@ if __name__ == "__main__":
     from pygame import Vector2
     import matplotlib.pyplot as plt
     octave = 3
-    max_res = 8
+    max_res = 9
     size = 1024
     
     offset = Vector2(-4,-3.5)
 
     # Make Terrain
-    perlin = PerlinNoise(size, max_res)
+    perlin = PerlinNoise(size, max_res, seed=10)
     perlin.offset = offset
-    perlin.value = 7
-    perlin.set_zoom()
-    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid()
+    perlin.zoom = 8
+    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=16, smooth=.4)
     print(pln.shape)
 
 
-    fig, ax = plt.subplots()
-
-    im = ax.imshow(pln, interpolation='bilinear',
-                origin='lower', extent=[-3, 3, -3, 3],)
-    plt.show()
     # Make Resources
 
+    perlin2 = PerlinNoise(size, 10, max_res-3)
+
+    def resources(perlin_map, value, chance):
+        '''
+        value = perlin value
+        chance = resource density
+        '''
+        def tree_point(x):
+            import random
+            if x >= value:
+                random.seed(x)
+                if random.random() <= chance:
+                    return 1
+            return 0
+            
+        return np.vectorize(tree_point)(perlin_map)
+        # return (result[0], result[1])
+    
+    pln2 = perlin2.normalized(perlin2.fractal())
+    trees = resources(pln2, 0.7, 0.01) 
+    trees = np.where((pln >= 0.4) & (trees == 1))
+
+    perlin2.zoom = 4
+    pln3 = perlin2.normalized(perlin2.fractal())
+    rocks = resources(pln3, 0.6, 0.003) 
+    rocks = np.where((pln >= 0.8) & (rocks == 1))
+
+    x, y = rocks
+    fig, ax = plt.subplots()
+
+
+
+    ax.imshow(pln)
+                
+    ax.scatter(y,x)    
+    plt.show()
