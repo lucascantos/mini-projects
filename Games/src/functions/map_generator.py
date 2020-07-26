@@ -2,6 +2,7 @@
 import numpy as np
 import math
 from matplotlib import pyplot as plt
+import json
 # from src.helpers.decorators import timeit
 class PerlinNoise:
     def __init__(self, size, res_pwr, zoom_value=0, offset=[0,0], seed=None):
@@ -148,7 +149,7 @@ if __name__ == "__main__":
     perlin = PerlinNoise(size, max_res, seed=10)
     perlin.offset = offset
     perlin.zoom = 8
-    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=16, smooth=.4)
+    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=8, smooth=0.04)
     print(pln.shape)
 
 
@@ -156,37 +157,89 @@ if __name__ == "__main__":
 
     perlin2 = PerlinNoise(size, 10, max_res-3)
 
-    def resources(perlin_map, value, chance):
+    def resources(perlin_map, value, chance, weighted=False, weight_pwr=4):
         '''
         value = perlin value
         chance = resource density
         '''
+
         def tree_point(x):
+            c = chance
+            pwr = weight_pwr
+            if weighted:
+                c *=  2*x**pwr
             import random
             if x >= value:
                 random.seed(x)
-                if random.random() <= chance:
+                if random.random() <= c:
                     return 1
             return 0
             
         return np.vectorize(tree_point)(perlin_map)
-        # return (result[0], result[1])
     
     pln2 = perlin2.normalized(perlin2.fractal())
-    trees = resources(pln2, 0.7, 0.01) 
+    trees = resources(pln2, 0.6, 0.1, True) 
+    x = trees[(pln >= 0.4) & (trees == 1)]
     trees = np.where((pln >= 0.4) & (trees == 1))
 
     perlin2.zoom = 4
     pln3 = perlin2.normalized(perlin2.fractal())
-    rocks = resources(pln3, 0.6, 0.003) 
+    rocks = resources(pln3, 0.6, 0.006) 
     rocks = np.where((pln >= 0.8) & (rocks == 1))
+    
 
-    x, y = rocks
+    x, y = trees
     fig, ax = plt.subplots()
 
-
-
     ax.imshow(pln)
-                
-    ax.scatter(y,x)    
+    ax.scatter(y,x,c='k', s=0.1)    
     plt.show()
+
+    import uuid
+    print(uuid.uuid4())
+    
+    awe = {
+        'type': 'terrain',
+        'coords': [-44,-23],
+        'properties':{
+            'height': 0.5,
+            'baseTemp': 295,
+            'spawn': {
+                'gameObject': 'tree',
+                'id': 'string_id',
+                'cooldown': 0, # Is available
+                'offset': [-.5, 0.4] # Trying to avoid grid-like objects
+            }
+        }
+    }
+    
+'''
+    hash_table = {
+        'power': 4
+        'hash_id_chunk': {   
+            'bbox': [0,0,31,31],
+            'hash_id_grid': {
+                'type': 'terrain',
+                'coords': [-44,-23],
+                'properties':{
+                    'height': 0.5,
+                    'baseTemp': 295,
+                    'spawn': {
+                        'gameObject': 'tree',
+                        'id': 'string_id',
+                        'cooldown': 0, # Is available
+                        'offset': [-.5, 0.4] # Trying to avoid grid-like objects
+                    }
+                }
+            },
+
+            'hash_id_grid2': {
+                'coords': [-45,-23],
+                'type': 'character',
+                'properties':{
+                    'id': 'string_id'
+                }
+            },
+        }       
+    }
+'''

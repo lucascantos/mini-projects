@@ -8,7 +8,7 @@ class InteractiveScreen:
         pygame.init()
         pygame.font.init()
 
-        self.SCREEN_DIM = Vector2(500,500)
+        self.SCREEN_DIM = Vector2(512,512)
         self.title = title
         self.screen = pygame.display.set_mode(round_vector(self.SCREEN_DIM))
         self.clock = pygame.time.Clock()
@@ -41,9 +41,9 @@ class InteractiveScreen:
         # Input
 
         # Update
-        # self.update()
+        self.update()
         # Render 
-        # self.render()
+        self.render()
 
         pygame.display.update()
         self.clock.tick(60)
