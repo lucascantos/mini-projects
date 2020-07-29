@@ -7,7 +7,14 @@ def load_json(file):
     try:
         with open(file) as f:
             return json.load(f)
-    except Exception as e:
-        print("File not found")
+    except:
         return None
         # raise ValueError(e)
+    
+def multi_threading(func, args):
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        if func.__code__.co_argcount >= 2 :
+            return executor.map(lambda args: func(**args), args)
+        else:
+            return executor.map(func, args)

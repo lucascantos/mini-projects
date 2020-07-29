@@ -2,16 +2,22 @@ def main():
     from src.functions.simple_screen import InteractiveScreen, Rectangle
     from src.configs.color_map import height
 
-    from src.game_objects.resources import Character
-    from src.configs.animations import martha_a
+    from src.game_objects.resources import Character, Placehodler
+    from src.game_objects.terrain import TerrainTile, ResourceTile
+    from src.configs.animations import characters, tileset
+    from src.helpers.hashmap import HashTable
 
     from pygame import Vector2, Vector3
     import pygame
 
     
-    new_screen = InteractiveScreen()
+    new_screen = InteractiveScreen()  
+    martha = Character(Vector2(new_screen.center), Vector2(251, 538), characters['martha'])
+
     
-    martha = Character(Vector2(50, 100), martha_a)
+    # TODO: about camara and stuff
+    my_map = TerrainTile(tileset)
+    k=[]
     while new_screen.toggle_run:
         from pygame import Vector2
         import pygame
@@ -46,64 +52,31 @@ def main():
 
             martha.state = new_state
             if offset != Vector2():
-                d = {
+                polar_2_index = {
                     -1: 3,
                     0: 1,
                     1: 0,
                     2: 2,
                     -2: 2,
                 }
-                martha.look_dir = d[round(offset.as_polar()[1]/90)]
-
+                martha.look_dir = polar_2_index[round(offset.as_polar()[1]/90)]
+                martha.move(5*offset/new_screen.clock.get_fps())
             if keys[pygame.K_SPACE]:
                 martha.state = 'attack'
                 martha.image_index = 0
-
-            
-        new_screen.all_sprites = [martha]
-        # Update
         
-        # Render 
+                # Update 
 
-        # Run
+        if my_map.set_center_chunk(martha.global_pos): 
+            print('Update', len(k))
+            my_map.update_tiles()
+            
+        k = []
+        k += my_map.update(martha.position, martha.global_pos)
+        zindex = lambda x: x.position[1]
+        k += [martha]
+        k.sort(key=zindex)
+        new_screen.all_sprites = k
         new_screen.run()
-
-        ## MAP TEST
-
-    # from src.configs.perlin_map import size, res, octave, p
-    # from src.functions.map_generator import PerlinNoise
-    # perlin = PerlinNoise(size, max_res, seed=10)
-    # perlin.offset = Vector2(-4,-3.5)
-    # octave = 3
-    # max_res = 9
-    # size = 128
-    # s = 4
-        # if zoom_level != 0 :
-        #     perlin.value += zoom_level
-        #     if max_res-1 >= perlin.value >= octave:
-        #         print(max_res-1, perlin.value, octave)
-        #         perlin.set_zoom()
-        #     else:
-        #         perlin.value -= zoom_level
-
-        # if offset != Vector2():
-        #     perlin.offset += offset/2
-        # print(perlin.offset)
-        # pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=16, smooth=.4)
-
-        # elements = []
-        # for x in range(0,size):
-        #     for y in range(0,size):
-        #         color = pln[x][y] * Vector3(255,255,255)
-        #         for h, color in height.items():
-        #             if pln[x][y]<=h:
-        #                 break
-        #         elements.append(Rectangle(Vector2(x,y)*s, Vector2(1,1)*s, color * pln[x][y]))
-        # # print(perlin.offset, perlin.value)
-        # for i in elements:
-        #     pygame.draw.rect(new_screen.screen, i.color, i.shape)
-        # allsprites.draw(new_screen)
-        # new_screen.run()
-
 if __name__ == "__main__":
     main()

@@ -136,7 +136,7 @@ class PerlinNoise:
 
 
 
-if __name__ == "__main__":
+def main():
     from pygame import Vector2
     import matplotlib.pyplot as plt
     octave = 3
@@ -150,8 +150,6 @@ if __name__ == "__main__":
     perlin.offset = offset
     perlin.zoom = 8
     pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=8, smooth=0.04)
-    print(pln.shape)
-
 
     # Make Resources
 
@@ -180,39 +178,27 @@ if __name__ == "__main__":
     pln2 = perlin2.normalized(perlin2.fractal())
     trees = resources(pln2, 0.6, 0.1, True) 
     x = trees[(pln >= 0.4) & (trees == 1)]
-    trees = np.where((pln >= 0.4) & (trees == 1))
+    # trees = np.where((pln >= 0.4) & (trees == 1))
 
     perlin2.zoom = 4
     pln3 = perlin2.normalized(perlin2.fractal())
     rocks = resources(pln3, 0.6, 0.006) 
-    rocks = np.where((pln >= 0.8) & (rocks == 1))
+    # rocks = np.where((pln >= 0.8) & (rocks == 1))
     
+    return np.around(pln, decimals=2), trees, rocks
 
-    x, y = trees
+def plot_map(minimap):
+    x, y = minimap
+    print(minimap, len(x), len(y))
     fig, ax = plt.subplots()
 
     ax.imshow(pln)
     ax.scatter(y,x,c='k', s=0.1)    
     plt.show()
 
-    import uuid
-    print(uuid.uuid4())
     
-    awe = {
-        'type': 'terrain',
-        'coords': [-44,-23],
-        'properties':{
-            'height': 0.5,
-            'baseTemp': 295,
-            'spawn': {
-                'gameObject': 'tree',
-                'id': 'string_id',
-                'cooldown': 0, # Is available
-                'offset': [-.5, 0.4] # Trying to avoid grid-like objects
-            }
-        }
-    }
-    
+if __name__ == "__main__":
+    main()
 '''
     hash_table = {
         'power': 4
@@ -243,3 +229,4 @@ if __name__ == "__main__":
         }       
     }
 '''
+

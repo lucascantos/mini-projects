@@ -2,6 +2,8 @@ import pygame
 from pygame import Vector3, Vector2
 from src.helpers.helpers import round_vector
 
+from src.helpers.decorators import timeit
+
 class InteractiveScreen:
     def __init__(self, title="Default"):
                 
@@ -15,6 +17,10 @@ class InteractiveScreen:
         self.toggle_run =True
         pygame.display.set_caption(self.title)
     
+    @property
+    def center(self):
+        return round_vector(self.SCREEN_DIM/2)
+        
     def get_all_sprites(self):
         return self._all_sprites
 
@@ -25,7 +31,6 @@ class InteractiveScreen:
 
     def update(self):
         self.all_sprites.update()
-
     def render(self):
         self.screen.fill((0,0,0))
         self.all_sprites.draw(self.screen)
@@ -38,6 +43,7 @@ class InteractiveScreen:
 
     def run(self):
         
+        pygame.display.set_caption(self.title + str(int(self.clock.get_fps())))
         # Input
 
         # Update
@@ -46,7 +52,7 @@ class InteractiveScreen:
         self.render()
 
         pygame.display.update()
-        self.clock.tick(60)
+        self.clock.tick(120)
 
 class Rectangle:
     def __init__(self,position, size, color):
