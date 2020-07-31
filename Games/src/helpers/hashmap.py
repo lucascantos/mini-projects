@@ -1,21 +1,26 @@
 
 import json
 import numpy as np
-from src.helpers.helpers import load_json
+from src.helpers.helpers import load_json, save_json
 import uuid
+from src.helpers.decorators import timeit
 class Chunks:
     def __init__(self):
-        self.filepath = 'src/assets/data/chunks.json'
+        self.chunksfile = 'src/assets/data/chunks.json'
         self.max_size = 1024
-        self.load_chunks()
-
-    def load_chunks(self):
-        self.chunk_table = load_json(self.filepath)
-        if self.chunk_table is None:
+        self.chunk_size=1
+        self.load()
+        
+    def load(self):
+        hashtable = load_json(self.chunksfile)
+        if hashtable is None:
             print('File not found. Making new. Dont forget to change the chunk_size')
-            self.chunk_table = self.make_chunk_table(4)
-            self.save_chunks()
-        pass
+            hashtable = self.make_chunk_table(2)
+            return hashtable
+        self.chunk_size = hashtable['chunkSize']
+        self.max_size = hashtable['maxSize']
+        array_size = round(self.max_size/self.chunk_size)
+        self.chunks = np.array(hashtable['chunks']).reshape(array_size,array_size)
 
     def set_chunk_size(self, power):
         if type(power) != int:
@@ -31,31 +36,31 @@ class Chunks:
         if power != None:
             self.set_chunk_size(power)
         array_size = round(self.max_size/self.chunk_size)
-        chunk_table = np.array([str(uuid.uuid4()) for _ in range(array_size*array_size)])
-        chunk_table = np.reshape(chunk_table, (array_size,array_size))
-        return chunk_table
+        self.chunks = np.array([str(uuid.uuid4()) for _ in range(array_size*array_size)])
+        self.chunks = np.reshape(self.chunks, (array_size,array_size))
+        self.save_chunks()
+        return self.chunks
 
     def save_chunks(self):
-        if self.filepath is None:
+        if self.chunksfile is None:
             raise ValueError('file path not set')
-        self.table = {
+        table = {
             'chunkSize': self.chunk_size,
             'maxSize': self.max_size,
-            'chunks': self.chunks.tolist(),
-            'elements': self.elements
+            'chunks': self.chunks.tolist()
         }
-        with open(self.file, 'w') as f:
-            json.dump(self.table, f)
+        with open(self.chunksfile, 'w') as f:
+            json.dump(table, f)
         print('chunks saved')
 
-
-class HashTable:
+class HashTable(Chunks):
     def __init__(self, filename='hashtable'):
-        self.file = f'src/assets/data/{filename}.json'
-        self.max_size = 1024
-        self.elements = {}
+        super().__init__()
+        self.filepath = f'src/assets/data/{filename}.json'
         if filename is not None:
-            self.load()
+            self.elements = load_json(self.filepath)
+            if self.elements is None:
+                self.elements = {}
 
     def add_element(self, element, hash_id=None):
         '''
@@ -63,7 +68,6 @@ class HashTable:
         é vazio? Cria lista, coloca o elemento, e enfia na tabela
         Não é? Append na lista
         '''
-        print()
         x, y = self.chunk_point(element['position'])
         if not hash_id:
             hash_id = str(uuid.uuid4())
@@ -73,75 +77,29 @@ class HashTable:
             self.elements[self.chunks[x][y]] = {hash_id: element}
         return hash_id
 
-    def chunk_point(self,coords):
-        return [int(coord / self.chunk_size) for coord in coords]
-
-    def subchunk_point(self,coords):
-        return [round(coord / self.chunk_size) for coord in coords]
-
     def remove_element(self, hash_id):
         for chunk in self.elements.values():
             if hash_id in chunk:
                 chunk.pop(hash_id)
                 return True
         return False
+
+    def chunk_point(self,coords):
+        return [int(coord / self.chunk_size) for coord in coords]
+
+    def subchunk_point(self,coords):
+        return [round(coord / self.chunk_size) for coord in coords]
      
-    def set_chunk_size(self, power):
-        if type(power) != int:
-            raise ValueError("Must be a int value")
-        _chunk_size = 2**power
-        if self.chunk_size != _chunk_size:
-            self.chunk_size  = _chunk_size
-            return self.chunk_size
-        else: 
-            return False
-
-    def update_chunks(self, power):
-        print('changing chunk size')
-        if not self.set_chunk_size(power):
-            return
-        self.chunks = self.make_chunk_table(power)  
-
+    def update_chunks(self):
         for chunk, values in self.elements.copy().items():
             for hash_id, value in values.items():
                 self.add_element(value, hash_id)
             self.elements.pop(chunk)
-        self.save()  
-
-
-    def make_chunk_table(self, power=None):
-        if power != None:
-            self.set_chunk_size(power)
-        array_size = round(self.max_size/self.chunk_size)
-        chunk_table = np.array([str(uuid.uuid4()) for _ in range(array_size*array_size)])
-        chunk_table = np.reshape(chunk_table, (array_size,array_size))
-        return chunk_table
+        self.save()
 
     def save(self):
+        save_json(self.elements, self.filepath)
 
-        if self.file is None:
-            raise ValueError('file path not set')
-        self.table = {
-            'chunkSize': self.chunk_size,
-            'maxSize': self.max_size,
-            'chunks': self.chunks.tolist(),
-            'elements': self.elements
-        }
-        with open(self.file, 'w') as f:
-            json.dump(self.table, f)
-        print('chunks saved')
-    def load(self):
-        self.table = load_json(self.file)
-        if self.table is None:
-            print('File not found. Making new. Dont forget to change the chunk_size')
-            self.set_chunk_size(4)
-            self.chunks = self.make_chunk_table()
-            self.save()
-        self.max_size = self.table['maxSize']
-        self.chunk_size = self.table['chunkSize']
-        self.chunks = np.array(self.table['chunks'])
-        self.elements = self.table['elements']
-    
     def inside_check(self, point, bbox):
         if bbox[0] <= point[0] < bbox[2] and bbox[1] <= point[1] < bbox[3]:
             return True

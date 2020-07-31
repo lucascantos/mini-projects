@@ -13,10 +13,11 @@ class ChunkManager(HashTable):
         self.graphic = graphic
         self.ss = spritesheet(graphic['file'])
         self.loaded_chunks = {}
-        self.tiles = []
+        self.tiles = {}
     
-    def set_center_chunk(self, global_center_pos):
+    def set_center_chunk(self, global_center_pos, local_center_pos):
         center_chunk = self.subchunk_point(global_center_pos)
+        self.local_pos_calc = lambda x: local_center_pos - (global_center_pos - x) * 32
         if self.center_chunk != center_chunk:
             self.center_chunk = center_chunk
             return True
@@ -35,28 +36,35 @@ class ChunkManager(HashTable):
         for x in range(int(min_render.x), int(max_render.x)):
             for y in range(int(min_render.y), int(max_render.y)):
                 local_chunk = self.chunks[x][y]  # Load Chunk hash  
+
                 if local_chunk in self.loaded_chunks.keys():
                     loaded_chunks[local_chunk] = self.loaded_chunks[local_chunk]
                 else:
                     if local_chunk in self.elements:  # Check if chunk hash is mapped
                         loaded_chunks[local_chunk] = self.elements[local_chunk]
+       
         self.loaded_chunks = loaded_chunks
-        
-    def update(self, func, *args, **kwargs,):
-        tiles = {}
-        for chunk in self.loaded_chunks.values():
-            for hash_id, element in chunk.items():
-                if hash_id not in self.tiles:
-                    update = False
-                else:
-                    update = True
-                    element = self.tiles[hash_id]
 
-                tiles[hash_id] = func(*args+(element, update), **kwargs)
-                tiles[hash_id].hash_id = hash_id
+    def update(self):
+        tiles = {}
+        for chunk_elements in self.loaded_chunks.values():
+            for hash_id, element in chunk_elements.items():                 
+                if hash_id not in self.tiles:           
+                    image_location = self.graphic['elements'][element['type']]['position']
+                    image_rect = pygame.Rect(Vector2(image_location) * 32, [32,32])
+                    tile_graphic = self.ss.image_at(image_rect, -1)
+
+                    global_pos = Vector2(element['position'])
+                    local_pos = self.local_pos_calc(global_pos)
+                    tiles[hash_id] = GraphicTile(local_pos, global_pos, tile_graphic)
+                else:
+                    element = self.tiles[hash_id]
+                    element.position = self.local_pos_calc(element.global_pos)
+                    tiles[hash_id] = element
         self.tiles = tiles
-        print(self.elements)
-        return self.tiles.values()
+        print(len(tiles))
+        return tiles.values()
+
 
     def make_graphics(self, center_local_pos, center_global_pos, element, update=False):  
         if update:    

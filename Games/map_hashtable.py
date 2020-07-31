@@ -1,6 +1,5 @@
 from src.functions.noise_generator import main as mapgen
-from src.helpers.hashmap import HashTable
-from src.game_objects.terrain import ResourceTile
+from src.helpers.hashmap import Chunks, HashTable
 from src.configs.animations import tileset
 from uuid import uuid4
 import random
@@ -18,13 +17,16 @@ def terrain_template (element):
         }
     }
 
-def main():
-    # height, trees, rocks = mapgen()
-    # def save(key, value):
-    #     with open(f'src/assets/data/raw/{key}_map.json','w') as f:
-    #         json.dump(values.tolist(), f)    
-    # for key, values in {'height': height, 'trees': trees, 'rocks': rocks}.items():
-    #     save(key,value)
+def make_data():
+    height, trees, rocks = mapgen()
+    def save(key, value):
+        with open(f'src/assets/data/raw/{key}_map.json','w') as f:
+            json.dump(values.tolist(), f)    
+    for key, values in {'height': height, 'trees': trees, 'rocks': rocks}.items():
+        save(key,value)
+    return height, trees, rocks 
+
+def make_files():
 
     keys = ['height', 'trees', 'rocks']
     def load(key):
@@ -91,5 +93,15 @@ def main():
 
     bg_terrain.save()
 
+def update_chunks():
+    chunks = Chunks()
+    chunks.make_chunk_table(2)
+    
+    keys = ['resources', 'terrain']
+    for key in keys:
+        resources = HashTable(key)
+        resources.update_chunks()
 if __name__ == "__main__":
-    main()
+    # make_files()
+    update_chunks()
+    

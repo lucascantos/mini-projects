@@ -30,7 +30,7 @@ def main():
     
     new_screen = InteractiveScreen()  
     martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
-    render_dist = 5 # In Chunks
+    render_dist = 3 # In Chunks
     
     # TODO: about camera and stuff
     bg_map = ChunkManager(tileset, 'terrain', render_dist)
@@ -39,13 +39,11 @@ def main():
     collision_objects = ChunkManager(tileset, 'resources', 1)
 
     while new_screen.toggle_run:
-        from pygame import Vector2
-        import pygame
 
         # Input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.toggle_run = False
+                new_screen.toggle_run = False
 
         keys = pygame.key.get_pressed()
         # zoom_level = 0
@@ -97,26 +95,27 @@ def main():
         # if collision_objects.set_center_chunk(martha.global_pos):
         #     collision_objects.update_tiles()   
         # col_list = list(collision_objects.update(collision_objects.make_collision, martha.position, martha.global_pos))
-
-        if bg_map.set_center_chunk(martha.global_pos): 
-            resources.set_center_chunk(martha.global_pos)
+        
+        from time import time
+        start = time()
+        
+        if bg_map.set_center_chunk(martha.global_pos, martha.position): 
+            resources.set_center_chunk(martha.global_pos, martha.position)
             print('Update')
-            bg_map.update_tiles()
-            resources.update_tiles()        
+            bg_map.update_tiles() 
+            resources.update_tiles() 
 
-        j = list(bg_map.update(bg_map.make_graphics, martha.position, martha.global_pos))
-        k = list(resources.update(resources.make_graphics, martha.position, martha.global_pos))
+        j = list(bg_map.update())
+        k = list(resources.update())
 
-        deleted = pygame.sprite.spritecollide(martha, pygame.sprite.RenderPlain(k), True)
-
-        for d in deleted:
-            print(d)
-            resources.remove_element(d.hash_id)
+        # deleted = pygame.sprite.spritecollide(martha, pygame.sprite.RenderPlain(k), True)
 
         zindex = lambda x: x.position[1]
+
         k += [martha]
         k.sort(key=zindex)
         new_screen.all_sprites = j + k
         new_screen.run()
+        
 if __name__ == "__main__":
     main()
