@@ -11,6 +11,15 @@ def load_json(file):
         return None
         # raise ValueError(e)
     
+def save_json(data, file):
+    import json
+    try:
+        with open(file, 'w') as f:
+            json.dump(data, f)
+            return True
+    except:
+        return None
+
 def multi_threading(func, args):
     import concurrent.futures
     with concurrent.futures.ThreadPoolExecutor() as executor:

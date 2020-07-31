@@ -10,7 +10,7 @@ import pygame
 class spritesheet(object):
     def __init__(self, filename):
         try:
-            self.sheet = pygame.image.load(filename)
+            self.sheet = pygame.image.load(filename).convert_alpha()
         except Exception as e:
             print ('Unable to load spritesheet image:', filename)
             raise ValueError(e)
@@ -18,7 +18,7 @@ class spritesheet(object):
     def image_at(self, rectangle, colorkey = None):
         "Loads image from x,y,x+offset,y+offset"
         rect = pygame.Rect(rectangle)
-        image = pygame.Surface(rect.size).convert()
+        image = pygame.Surface(rect.size)
         image.blit(self.sheet, (0, 0), rect)
         if colorkey is not None:
             if colorkey == -1:
@@ -58,7 +58,7 @@ class SpriteStripAnim(object):
         the iterator advances to the next image.
         """
         self.filename = filename
-        ss = spritesheet.spritesheet(filename)
+        ss = spritesheet(filename)
         self.images = ss.load_strip(rect, count, colorkey)
         self.i = 0
         self.loop = loop

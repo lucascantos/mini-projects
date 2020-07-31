@@ -31,6 +31,7 @@ class InteractiveScreen:
 
     def update(self):
         self.all_sprites.update()
+
     def render(self):
         self.screen.fill((0,0,0))
         self.all_sprites.draw(self.screen)
@@ -43,7 +44,7 @@ class InteractiveScreen:
 
     def run(self):
         
-        pygame.display.set_caption(self.title + str(int(self.clock.get_fps())))
+        pygame.display.set_caption(f'{self.title} - {str(int(self.clock.get_fps()))}fps')
         # Input
 
         # Update
@@ -52,7 +53,7 @@ class InteractiveScreen:
         self.render()
 
         pygame.display.update()
-        self.clock.tick(120)
+        self.clock.tick(60)
 
 class Rectangle:
     def __init__(self,position, size, color):

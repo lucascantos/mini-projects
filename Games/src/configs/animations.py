@@ -1,9 +1,8 @@
 from pygame import Vector2
-x = Vector2(1,1)
-print(list(x))
+
 characters = {
     'martha': { # Frames are columns of sheet
-        'file': 'src/assets/Martha.png',
+        'file': 'src/assets/martha.png',
         'type': 'sheet',
         'size': [32,32],
         'actions': {

@@ -3,12 +3,6 @@ from pygame import Vector2
 
 from src.functions.sprite_sheet import spritesheet
 # from game_objects.character import Head
-class Placehodler(pygame.sprite.Sprite):
-    def __init__(self, position):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('src/assets/placeholder.png')
-        self.rect = pygame.Rect(Vector2(), [16,16])
-        self.rect.center = position
 class GameObject(pygame.sprite.Sprite):
     def __init__(self, size, position):
         pygame.sprite.Sprite.__init__(self)
@@ -64,8 +58,7 @@ class Character(GameObject):
             self.image = self.animations[self.state][self.look_dir][self.image_index]
             if len(self.animations[self.state][self.look_dir])-1 <= self.image_index:
                 self.state = 'idle'
-
-
+                
     def move(self, offset):
         # check if bottom collision is true
         self.global_pos += offset
@@ -102,10 +95,17 @@ class Character(GameObject):
                     all_dir.append(single_dir)
             output[name] = all_dir
         return output
+
 class Player(Character):
     def __init__(self):
         super().__init__()
 
+class Placehodler(pygame.sprite.Sprite):
+    def __init__(self, position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('src/assets/placeholder.png')
+        self.rect = pygame.Rect(Vector2(), [16,16])
+        self.rect.center = position
 '''
 
 x_movement = Vector2(input_movement.x, 0)

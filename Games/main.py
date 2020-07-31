@@ -1,9 +1,26 @@
 def main():
+    '''
+    TODO: 
+    Update Animation with FPS
+    Add Interactions
+    Add Items DB
+    Add AI
+    Add Dynamic Camera
+
+    DOING:
+    Update Hashtable (split chunks and elements)
+    
+    Add Collision
+
+    DONE:
+    fix border and fps drop
+    fix alpha sprites
+    '''
     from src.functions.simple_screen import InteractiveScreen, Rectangle
     from src.configs.color_map import height
 
     from src.game_objects.resources import Character, Placehodler
-    from src.game_objects.terrain import TerrainTile, ResourceTile
+    from src.game_objects.terrain import ChunkManager
     from src.configs.animations import characters, tileset
     from src.helpers.hashmap import HashTable
 
@@ -12,12 +29,15 @@ def main():
 
     
     new_screen = InteractiveScreen()  
-    martha = Character(Vector2(new_screen.center), Vector2(251, 538), characters['martha'])
-
+    martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
+    render_dist = 5 # In Chunks
     
-    # TODO: about camara and stuff
-    my_map = TerrainTile(tileset)
-    k=[]
+    # TODO: about camera and stuff
+    bg_map = ChunkManager(tileset, 'terrain', render_dist)
+    resources = ChunkManager(tileset, 'resources', render_dist)
+
+    collision_objects = ChunkManager(tileset, 'resources', 1)
+
     while new_screen.toggle_run:
         from pygame import Vector2
         import pygame
@@ -65,18 +85,38 @@ def main():
                 martha.state = 'attack'
                 martha.image_index = 0
         
-                # Update 
+        # Update 
+        '''
+        group moving objects (players, creatures, emtities, etc)
+        group collision objects (terrain, characters, entities, objects, etc)
+        around every MO, load 1 chunk worth of CO
+        check for collisions on all MO
 
-        if my_map.set_center_chunk(martha.global_pos): 
-            print('Update', len(k))
-            my_map.update_tiles()
-            
-        k = []
-        k += my_map.update(martha.position, martha.global_pos)
+        Maybe add subgroups o updated objects
+        '''
+        # if collision_objects.set_center_chunk(martha.global_pos):
+        #     collision_objects.update_tiles()   
+        # col_list = list(collision_objects.update(collision_objects.make_collision, martha.position, martha.global_pos))
+
+        if bg_map.set_center_chunk(martha.global_pos): 
+            resources.set_center_chunk(martha.global_pos)
+            print('Update')
+            bg_map.update_tiles()
+            resources.update_tiles()        
+
+        j = list(bg_map.update(bg_map.make_graphics, martha.position, martha.global_pos))
+        k = list(resources.update(resources.make_graphics, martha.position, martha.global_pos))
+
+        deleted = pygame.sprite.spritecollide(martha, pygame.sprite.RenderPlain(k), True)
+
+        for d in deleted:
+            print(d)
+            resources.remove_element(d.hash_id)
+
         zindex = lambda x: x.position[1]
         k += [martha]
         k.sort(key=zindex)
-        new_screen.all_sprites = k
+        new_screen.all_sprites = j + k
         new_screen.run()
 if __name__ == "__main__":
     main()
