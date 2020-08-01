@@ -2,24 +2,26 @@ def main():
     '''
     TODO: 
     Update Animation with FPS
+    Update Collisions to x/y
+    update movement speed
+    
     Add Interactions
     Add Items DB
     Add AI
     Add Dynamic Camera
 
     DOING:
-    Update Hashtable (split chunks and elements)
-    
-    Add Collision
 
     DONE:
+    Update Hashtable (split chunks and elements)    
+    Add Collision
     fix border and fps drop
     fix alpha sprites
     '''
     from src.functions.simple_screen import InteractiveScreen, Rectangle
     from src.configs.color_map import height
 
-    from src.game_objects.resources import Character, Placehodler
+    from src.game_objects.resources import Character, Placehodler, TerrainTile, ResourcesTile, CircleCollision
     from src.game_objects.terrain import ChunkManager
     from src.configs.animations import characters, tileset
     from src.helpers.hashmap import HashTable
@@ -29,17 +31,25 @@ def main():
 
     
     new_screen = InteractiveScreen()  
-    martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
     render_dist = 3 # In Chunks
+
+    martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
+    relative_position = lambda x: martha.position - (martha.global_pos - x) * 32
     
     # TODO: about camera and stuff
-    bg_map = ChunkManager(tileset, 'terrain', render_dist)
-    resources = ChunkManager(tileset, 'resources', render_dist)
+    bg_map = ChunkManager(tileset, TerrainTile, 'terrain', render_dist)
+    resources = ChunkManager(tileset, ResourcesTile, 'resources', render_dist)
+    avg = 0
 
-    collision_objects = ChunkManager(tileset, 'resources', 1)
+
+    def circle_collider(sprite):
+        """Check if the hitboxes of the two sprites collide."""
+        return CircleCollision(sprite.position, sprite.radius)
+    
+    def walk_collision(sprite, other):
+        return pygame.sprite.collide_circle(circle_collider(sprite), circle_collider(other))
 
     while new_screen.toggle_run:
-
         # Input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -78,11 +88,14 @@ def main():
                     -2: 2,
                 }
                 martha.look_dir = polar_2_index[round(offset.as_polar()[1]/90)]
-                martha.move(5*offset/new_screen.clock.get_fps())
+                fps = new_screen.clock.get_fps() if new_screen.clock.get_fps() > 0 else 1
+                rel_offset = 5 * offset/fps
+                martha.move(rel_offset)
             if keys[pygame.K_SPACE]:
                 martha.state = 'attack'
                 martha.image_index = 0
         
+        relative_position = lambda x: martha.position - (martha.global_pos - x) * 32
         # Update 
         '''
         group moving objects (players, creatures, emtities, etc)
@@ -96,19 +109,26 @@ def main():
         #     collision_objects.update_tiles()   
         # col_list = list(collision_objects.update(collision_objects.make_collision, martha.position, martha.global_pos))
         
+        #TODO Check if camera changed chunk, no bg_map
+        if bg_map.set_center_chunk(martha.global_pos): 
+            print('Update')
+            loaded_chunks = bg_map.update_tiles() 
+            resources.set_center_chunk(martha.global_pos)
+
+        
         from time import time
         start = time()
-        
-        if bg_map.set_center_chunk(martha.global_pos, martha.position): 
-            resources.set_center_chunk(martha.global_pos, martha.position)
-            print('Update')
-            bg_map.update_tiles() 
-            resources.update_tiles() 
+        j = list(bg_map.update(loaded_chunks, relative_position))
+        k = list(resources.update(loaded_chunks, relative_position))
 
-        j = list(bg_map.update())
-        k = list(resources.update())
+        end = round((time() - start)*1000,2)
+        avg = (avg + end) / 2
+        # print(avg) if avg > 7 else None
 
-        # deleted = pygame.sprite.spritecollide(martha, pygame.sprite.RenderPlain(k), True)
+        deleted = pygame.sprite.spritecollide(martha, pygame.sprite.RenderPlain(k), True, walk_collision)
+        if len(deleted) > 0:
+            martha.move(-rel_offset)
+            print(deleted)
 
         zindex = lambda x: x.position[1]
 
@@ -116,6 +136,6 @@ def main():
         k.sort(key=zindex)
         new_screen.all_sprites = j + k
         new_screen.run()
-        
+
 if __name__ == "__main__":
     main()

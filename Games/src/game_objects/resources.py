@@ -3,6 +3,24 @@ from pygame import Vector2
 
 from src.functions.sprite_sheet import spritesheet
 # from game_objects.character import Head
+
+
+class SpriteTile(pygame.sprite.Sprite):
+    def __init__(self, local_pos, global_pos, size = [32,32]):
+        pygame.sprite.Sprite.__init__(self)
+        self.global_pos = global_pos
+        self.rect = pygame.Rect(local_pos, [32,32])
+        self.position = local_pos
+        
+    def get_position(self):
+        return self.rect.center
+    def set_position(self, position):
+        self.rect.center = position
+
+    position = property(get_position, set_position)
+
+
+
 class GameObject(pygame.sprite.Sprite):
     def __init__(self, size, position):
         pygame.sprite.Sprite.__init__(self)
@@ -10,9 +28,15 @@ class GameObject(pygame.sprite.Sprite):
         self.rect.center = position # Adjust local position to be center
         self.collision_box = None # List of masks to be applied
 
-    @property
-    def position(self):
-            return self.rect.center            
+        self.global_pos = Vector2()
+        self.center_rel_pos = lambda x: self.position - (self.global_pos - x) * 32
+
+    def get_position(self):
+        return self.rect.center
+    def set_position(self, position):
+        self.rect.center = position
+    position = property(get_position, set_position)
+
     @property
     def width(self):
         return self.canvas.get_width()
@@ -23,7 +47,7 @@ class GameObject(pygame.sprite.Sprite):
 
 class Character(GameObject):
     def __init__(self, position, global_pos, graphics):
-        super().__init__(Vector2(32,32),position) 
+        super().__init__(Vector2(32,32),position) # Standard graphic size 32x32
 
         self.animations = {} # Animations of object
         self.state = 'idle'
@@ -31,19 +55,20 @@ class Character(GameObject):
         self.image = None # Current frame to show
 
         self.global_pos = global_pos
-        top_center = Vector2(self.rect.center)
-        top_center.y /= 2
-        top_center -= top_center / 2
 
-        bot_center = Vector2(self.rect.center)
-        bot_center.y *= 1.5
-        bot_center -= bot_center / 2
+        self.radius = int(32/4) # Radius of 1/4 the width
 
-        self.collision_box = [
-            pygame.Rect(top_center,  Vector2(self.rect.size) / 2 ),
-            pygame.Rect(bot_center,  Vector2(self.rect.size) / 2 )
-        ]
-        self.animations = self.make_animations(graphics, 4)
+        self.speed = 0
+        self.velocity = [0,0]
+        collision_boxes = {
+            'broadVision': {}, # diagonal square (diamond)
+            'focusVision': {}, # narrow rectanle
+            'periferalVision': {}, # wide oval
+            'collision':{}, #base circle
+            'interaction':{} # 2x size
+        }
+        
+        self.animations = self.make_animations(graphics, 4) # 4 Directions of animation (W,N,E,S)
         self.look_dir = 0
 
     def update(self):
@@ -95,30 +120,41 @@ class Character(GameObject):
                     all_dir.append(single_dir)
             output[name] = all_dir
         return output
+    
+    def relative_position(self, position):
+        return self.position - (self.global_pos - position) * 32
 
-class Player(Character):
-    def __init__(self):
-        super().__init__()
+class TerrainTile(GameObject):
+    def __init__(self, position, global_pos, graphic):
+        super().__init__(Vector2(32,32), position)
+        self.image = graphic
+        self.global_pos = global_pos
+
+class ResourcesTile(TerrainTile):
+    def __init__(self, position, global_pos, graphic):
+        super().__init__(position, global_pos, graphic)
+        self.radius = int(32/4)
+
+class CircleCollision(pygame.sprite.Sprite):
+    def __init__(self,position, radius=None, size=[32,32]):
+        self.rect = pygame.Rect([0,0], [16,16])
+        self.rect.center = Vector2(position) + Vector2(0,int(size[1]/2))
+        if radius is not None:
+            self.radius = int(size[0]/4)
+
+
 
 class Placehodler(pygame.sprite.Sprite):
-    def __init__(self, position):
+    def __init__(self, position, global_pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('src/assets/placeholder.png')
-        self.rect = pygame.Rect(Vector2(), [16,16])
+        self.rect = pygame.Rect(position, [16,16])
         self.rect.center = position
-'''
-
-x_movement = Vector2(input_movement.x, 0)
-if collision(player, element, x_movement):
-    player_movement -= x_movement
+        self.global_pos = global_pos
     
-y_movement = Vector2(0, input_movement.y)
-if collision(player, element, y_movement):
-    player_movement -= y_movement
+    def get_position(self):
+        return self.rect.center
 
-if collision(player, element,player.momentum):
-    player.momentum = Vector2(0,0)
-
-if player_movement == player.momentum:
-    break
-'''
+    def set_position(self, position):
+        self.rect.center = position
+    position = property(get_position, set_position)

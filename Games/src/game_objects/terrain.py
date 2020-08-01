@@ -6,26 +6,25 @@ from pygame import Vector2
 
 
 class ChunkManager(HashTable):
-    def __init__(self, graphic, filename, render_dist=1):
+    def __init__(self, graphic, sprite_object, filename, render_dist=1):
         super().__init__(filename)
         self.center_chunk = Vector2()
         self.render_dist = render_dist
         self.graphic = graphic
+        self.sprite_object = sprite_object
         self.ss = spritesheet(graphic['file'])
         self.loaded_chunks = {}
         self.tiles = {}
     
-    def set_center_chunk(self, global_center_pos, local_center_pos):
+    def set_center_chunk(self, global_center_pos):
         center_chunk = self.subchunk_point(global_center_pos)
-        self.local_pos_calc = lambda x: local_center_pos - (global_center_pos - x) * 32
         if self.center_chunk != center_chunk:
             self.center_chunk = center_chunk
             return True
         return False
 
     def update_tiles(self):
-        loaded_chunks = {}
-            
+        loaded_chunks = []            
         min_render = self.center_chunk - Vector2(self.render_dist,self.render_dist)
         if self.render_dist > 1:        
             max_render = self.center_chunk + Vector2(self.render_dist,self.render_dist)
@@ -36,97 +35,26 @@ class ChunkManager(HashTable):
         for x in range(int(min_render.x), int(max_render.x)):
             for y in range(int(min_render.y), int(max_render.y)):
                 local_chunk = self.chunks[x][y]  # Load Chunk hash  
+                loaded_chunks.append(local_chunk)
+        return loaded_chunks
 
-                if local_chunk in self.loaded_chunks.keys():
-                    loaded_chunks[local_chunk] = self.loaded_chunks[local_chunk]
-                else:
-                    if local_chunk in self.elements:  # Check if chunk hash is mapped
-                        loaded_chunks[local_chunk] = self.elements[local_chunk]
-       
-        self.loaded_chunks = loaded_chunks
-
-    def update(self):
+    def update(self, chunks,  position):
         tiles = {}
-        for chunk_elements in self.loaded_chunks.values():
-            for hash_id, element in chunk_elements.items():                 
-                if hash_id not in self.tiles:           
-                    image_location = self.graphic['elements'][element['type']]['position']
-                    image_rect = pygame.Rect(Vector2(image_location) * 32, [32,32])
-                    tile_graphic = self.ss.image_at(image_rect, -1)
+        for chunk_id in chunks:
+            if chunk_id in self.elements:
+                for hash_id, element in self.elements[chunk_id].items():                 
+                    if hash_id not in self.tiles:           
+                        image_location = self.graphic['elements'][element['type']]['position']
+                        image_rect = pygame.Rect(Vector2(image_location) * 32, [32,32])
+                        tile_graphic = self.ss.image_at(image_rect, -1)
 
-                    global_pos = Vector2(element['position'])
-                    local_pos = self.local_pos_calc(global_pos)
-                    tiles[hash_id] = GraphicTile(local_pos, global_pos, tile_graphic)
-                else:
-                    element = self.tiles[hash_id]
-                    element.position = self.local_pos_calc(element.global_pos)
-                    tiles[hash_id] = element
+                        global_pos = Vector2(element['position'])
+                        local_pos = position(global_pos)
+                        tiles[hash_id] = self.sprite_object(local_pos, global_pos, tile_graphic)
+                    else:
+                        element = self.tiles[hash_id]
+                        local_pos = position(element.global_pos)
+                        element.position = local_pos
+                        tiles[hash_id] = element
         self.tiles = tiles
-        print(len(tiles))
         return tiles.values()
-
-
-    def make_graphics(self, center_local_pos, center_global_pos, element, update=False):  
-        if update:    
-            local_pos = center_local_pos - (center_global_pos - element.global_pos) * 32
-            element.position = local_pos
-            return element
-        else:  
-            image_location = self.graphic['elements'][element['type']]['position']
-            image_rect = pygame.Rect(Vector2(image_location) * 32, [32,32])
-            tile_graphic = self.ss.image_at(image_rect, -1)
-
-            global_pos = Vector2(element['position'])
-            local_pos = center_local_pos - (center_global_pos - global_pos) * 32
-            return GraphicTile(local_pos, global_pos, tile_graphic)
-
-
-    def make_collision(self, element, center_local_pos, center_global_pos,update=False, **kwargs):  
-        if update:    
-            local_pos = center_local_pos - (center_global_pos - element.global_pos) * 32
-            element.position = local_pos
-            return element
-        else:  
-            global_pos = Vector2(element['position'])
-            local_pos = center_local_pos - (center_global_pos - global_pos) * 32
-            return CollisionShape(local_pos, global_pos, **kwargs)
-
-class SpriteTile(pygame.sprite.Sprite):
-    def __init__(self, local_pos, global_pos, size = [32,32]):
-        pygame.sprite.Sprite.__init__(self)
-        self.global_pos = global_pos
-        self.rect = pygame.Rect(local_pos, [32,32])
-        self.position = local_pos
-        
-    def get_position(self):
-        return self.rect.center
-    def set_position(self, position):
-        self.rect.center = position
-    position = property(get_position, set_position)
-
-class GraphicTile(SpriteTile):
-    def __init__(self, local_pos, global_pos, graphic):
-        super().__init__(local_pos, global_pos)
-        self.image = graphic
-
-class CollisionShape(SpriteTile):
-    def __init__(self, local_pos, global_pos, radius=None):
-        super().__init__(local_pos, global_pos)
-        if radius is not None:
-            self.radius = radius    
-
-class Placehodler(pygame.sprite.Sprite):
-    def __init__(self, position, global_pos):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('src/assets/placeholder.png')
-        self.rect = pygame.Rect(position, [16,16])
-        self.rect.center = position
-        self.global_pos = global_pos
-    
-    def get_position(self):
-        return self.rect.center
-
-    def set_position(self, position):
-        self.rect.center = position
-    position = property(get_position, set_position)
-

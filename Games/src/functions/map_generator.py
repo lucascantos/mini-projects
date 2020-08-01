@@ -6,6 +6,14 @@ import json
 # from src.helpers.decorators import timeit
 class PerlinNoise:
     def __init__(self, size, res_pwr, zoom_value=0, offset=[0,0], seed=None):
+        '''
+        Make a perlin noise square 2D map
+        :param size: int, size of width and hight
+        :param res_pwr:int, power of 2 to increse resolution
+        :param zoom_value:int, value to make a zoom like subset
+        :param offset: tuple, offset of center
+        :param seed:, int, seed to feed the random number generator
+        '''
         self.size = size
         self.res_pwr = res_pwr
         self.offset = offset
@@ -18,12 +26,18 @@ class PerlinNoise:
         
 
     def get_resolution(self):
+        '''
+        Make a resolution tuple
+        '''
         return self._res        
     def set_resolution(self):
         self._res = [2**self.res_pwr + 1,  2**self.res_pwr + 1]
     res = property(get_resolution, set_resolution)
 
     def get_zoom(self):
+        '''
+        Sets the zoom level
+        '''
         return self._zoom
     def set_zoom(self, value):
         self.value = value
@@ -33,15 +47,25 @@ class PerlinNoise:
     def get_noise(self):
         return self._noise
     def set_noise(self):
+        '''
+        Make the noise map out of parameters
+        '''
         self._noise = self.generate_perlin_noise_2d()
 
     noise = property(get_noise, set_noise)
 
     def generate_perlin_noise_2d(self):  
+        '''
+        Main function to make a noise map
+        '''
         def f(t):
             return 6*t**5 - 15*t**4 + 10*t**3 
             
         def random_array():
+            '''
+            Helper function to which makes a random 2d matrix seeded by coords.
+            This results in a constant value map
+            '''
             import random
             step = self.zoom+1
             full_range = [
@@ -59,18 +83,11 @@ class PerlinNoise:
         delta = (zoom / self.size, zoom / self.size)
         d = (self.size // zoom, self.size // zoom)
         grid = np.mgrid[0:zoom:delta[0],0:zoom:delta[1]].transpose(1, 2, 0) % 1
-    
-        # Gradients
-        # if seed:
-        #     np.random.seed(seed)    
-        #     random_numbers = np.random.rand(self.zoom+1, self.zoom+1)
-        # else:                
         random_numbers = list(random_array())
         
         random_numbers = np.reshape(random_numbers, (zoom+1, zoom+1))
         
-        # print(random_numbers.shape)
-        angles = 2*np.pi*random_numbers
+        # print(random_numbers.shape)        angles = 2*np.pi*random_numbers
         gradients = np.dstack((np.cos(angles), np.sin(angles)))
         g00 = gradients[0:-1,0:-1].repeat(d[0], 0).repeat(d[1], 1)
         g10 = gradients[1:,0:-1].repeat(d[0], 0).repeat(d[1], 1)
@@ -89,8 +106,12 @@ class PerlinNoise:
         n1 = n01*(1-t[:,:,0]) + t[:,:,0]*n11
         return np.sqrt(2)*((1-t[:,:,1])*n0 + t[:,:,1]*n1)
 
-    # @timeit
     def fractal(self, octaves=1, persistence=0.5):
+        '''
+        Adds fractals to the perlin noise, adding fine details to the map
+        :param octaves:int, How many maps will be added to the main map
+        :param persistence:float, Decay rate of amplitude on each octave iteration
+        '''
         noise = np.zeros([self.size, self.size])
         frequency = 1
         amplitude = 1
@@ -103,6 +124,10 @@ class PerlinNoise:
         return noise
 
     def normalized (self, array=None):
+        '''
+        Normalize an array by making the values between -1 and 1
+        :param array: np.array, target array to be normalized
+        '''
         if array is None:
             array = self.noise
         x_min = np.amin(array)
@@ -110,11 +135,20 @@ class PerlinNoise:
         return (array - x_min)/(x_max-x_min)
 
     def squared(self, array=None):
+        '''
+        Squares an array
+        :param array: np.array, target array to be squared
+        '''
         if array is None:
             array = self.noise
         return np.sqrt(array * array)
 
-    def sigmoid(self, threshold = 12, smooth = 1):
+    def sigmoid(self, threshold = 12, smoothness = 1):
+        '''
+        Makes a sigmoid curve on a 3d matrix  to make island like features
+        :param threshold:int, Border subdivision of matrix.
+        :param smoothness: int, how smooth or steep the sigmoid transition will be.
+        '''
         f = self.size/2
         # bell = lambda x: 2.0*(1-math.cos(x*3.1415/(f))) if self.size*1/8 >= x or x >= self.size*7/8 else 1
         def bell(x):
@@ -124,7 +158,7 @@ class PerlinNoise:
             elif x >= self.size / 2:
                 k = self.size*(1-1/threshold)
                 signal = -1
-            a = smooth
+            a = smoothenss
             a *= signal
             return round(1/(1+math.exp(-a*x + a* k)),2)
         
@@ -149,7 +183,7 @@ def main():
     perlin = PerlinNoise(size, max_res, seed=10)
     perlin.offset = offset
     perlin.zoom = 8
-    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=8, smooth=0.04)
+    pln = perlin.normalized(perlin.fractal(octave)) * perlin.sigmoid(threshold=8, smoothness=0.04)
 
     # Make Resources
 
@@ -157,11 +191,16 @@ def main():
 
     def resources(perlin_map, value, chance, weighted=False, weight_pwr=4):
         '''
-        value = perlin value
-        chance = resource density
+        Adds resorces based on another persion noise map
+        :param perlin_map:perlin map, 
+        :param value:float, value threshold of perlin noise to show resource
+        :param chance: float, resource density
         '''
 
         def tree_point(x):
+            '''
+            Helper function that return True or False
+            '''
             c = chance
             pwr = weight_pwr
             if weighted:
@@ -188,6 +227,9 @@ def main():
     return np.around(pln, decimals=2), trees, rocks
 
 def plot_map(minimap):
+    '''
+    Plots the map on matplotlib for preview visualization
+    '''
     x, y = minimap
     print(minimap, len(x), len(y))
     fig, ax = plt.subplots()
