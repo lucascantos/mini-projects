@@ -23,17 +23,21 @@ class SpriteTile(pygame.sprite.Sprite):
 
 class GameObject(pygame.sprite.Sprite):
     def __init__(self, size, position):
+        '''
+        Base game object sprite
+        :param size: tuple, size of main rectangle of sprite
+        :param position: tuple, local position of sprite
+        '''
         pygame.sprite.Sprite.__init__(self)
         self.rect = pygame.Rect(Vector2(), size) # Square to be draw uppon
         self.rect.center = position # Adjust local position to be center
-        self.collision_box = None # List of masks to be applied
 
         self.global_pos = Vector2()
-        self.center_rel_pos = lambda x: self.position - (self.global_pos - x) * 32
 
     def get_position(self):
         return self.rect.center
     def set_position(self, position):
+        # Change the local position to be the center of the sprite
         self.rect.center = position
     position = property(get_position, set_position)
 
@@ -60,6 +64,7 @@ class Character(GameObject):
 
         self.speed = 0
         self.velocity = [0,0]
+
         collision_boxes = {
             'broadVision': {}, # diagonal square (diamond)
             'focusVision': {}, # narrow rectanle
@@ -123,7 +128,6 @@ class Character(GameObject):
     
     def relative_position(self, position):
         return self.position - (self.global_pos - position) * 32
-
 class TerrainTile(GameObject):
     def __init__(self, position, global_pos, graphic):
         super().__init__(Vector2(32,32), position)

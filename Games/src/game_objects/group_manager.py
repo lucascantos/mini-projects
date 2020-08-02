@@ -4,7 +4,6 @@ from src.helpers.hashmap import HashTable
 import pygame
 from pygame import Vector2
 
-
 class ChunkManager(HashTable):
     def __init__(self, graphic, sprite_object, filename, render_dist=1):
         super().__init__(filename)

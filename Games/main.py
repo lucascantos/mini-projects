@@ -22,7 +22,8 @@ def main():
     from src.configs.color_map import height
 
     from src.game_objects.resources import Character, Placehodler, TerrainTile, ResourcesTile, CircleCollision
-    from src.game_objects.terrain import ChunkManager
+    from src.game_objects.overlay import SkyTint
+    from src.game_objects.group_manager import ChunkManager
     from src.configs.animations import characters, tileset
     from src.helpers.hashmap import HashTable
 
@@ -34,6 +35,7 @@ def main():
     render_dist = 3 # In Chunks
 
     martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
+    sky = SkyTint()
     relative_position = lambda x: martha.position - (martha.global_pos - x) * 32
     
     # TODO: about camera and stuff
@@ -49,6 +51,8 @@ def main():
     def walk_collision(sprite, other):
         return pygame.sprite.collide_circle(circle_collider(sprite), circle_collider(other))
 
+    from time import time
+    start = time()
     while new_screen.toggle_run:
         # Input
         for event in pygame.event.get():
@@ -105,9 +109,13 @@ def main():
 
         Maybe add subgroups o updated objects
         '''
-        # if collision_objects.set_center_chunk(martha.global_pos):
-        #     collision_objects.update_tiles()   
-        # col_list = list(collision_objects.update(collision_objects.make_collision, martha.position, martha.global_pos))
+        
+
+        hour = (time() - start)/2
+        if hour >= 24:
+            start =time()
+            hour -= 24
+        sky.set_color(hour)
         
         #TODO Check if camera changed chunk, no bg_map
         if bg_map.set_center_chunk(martha.global_pos): 
@@ -116,8 +124,6 @@ def main():
             resources.set_center_chunk(martha.global_pos)
 
         
-        from time import time
-        start = time()
         j = list(bg_map.update(loaded_chunks, relative_position))
         k = list(resources.update(loaded_chunks, relative_position))
 
@@ -134,8 +140,7 @@ def main():
 
         k += [martha]
         k.sort(key=zindex)
-        new_screen.all_sprites = j + k
+        new_screen.all_sprites = j + k + [sky]
         new_screen.run()
-
 if __name__ == "__main__":
     main()

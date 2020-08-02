@@ -6,6 +6,10 @@ from src.helpers.decorators import timeit
 
 class InteractiveScreen:
     def __init__(self, title="Default"):
+        '''
+        Main pygame screen to handle updates and blits
+        :param title: str, Base title of screen
+        '''
                 
         pygame.init()
         pygame.font.init()
@@ -30,19 +34,23 @@ class InteractiveScreen:
     all_sprites = property(get_all_sprites, set_all_sprites)
 
     def update(self):
+        '''
+        Run update to all sprites
+        '''
         self.all_sprites.update()
 
     def render(self):
+        '''
+        Draw sprites and background
+        '''
         self.screen.fill((0,0,0))
         self.all_sprites.draw(self.screen)
-        # for element in elements:
-        #     if isinstance(element, Rectangle):
-        #         pygame.draw.rect(self.screen, element.color, element.shape)
-        #     else:
-        #         continue
-        #         self.screen.blit(element)
+
 
     def run(self):
+        '''
+        Update and render the elements
+        '''
         
         pygame.display.set_caption(f'{self.title} - {str(int(self.clock.get_fps()))}fps')
         # Input
