@@ -6,6 +6,13 @@ from pygame import Vector2
 
 class ChunkManager(HashTable):
     def __init__(self, graphic, sprite_object, filename, render_dist=1):
+        '''
+        Handle chunk loading of a elements list file
+        :param graphic: dict, dictionary with sprite sheet containing animations
+        :param sprite_object: sprite, sprite object of elements
+        :param filename: string, name of elements file
+        :param render_dist: int, number of chunks around center to be loaded
+        '''
         super().__init__(filename)
         self.center_chunk = Vector2()
         self.render_dist = render_dist
@@ -16,6 +23,10 @@ class ChunkManager(HashTable):
         self.tiles = {}
     
     def set_center_chunk(self, global_center_pos):
+        '''
+        Sets center chunk location
+        :param global_center_pos: tuple, global coordinates of center object
+        '''
         center_chunk = self.subchunk_point(global_center_pos)
         if self.center_chunk != center_chunk:
             self.center_chunk = center_chunk
@@ -23,6 +34,9 @@ class ChunkManager(HashTable):
         return False
 
     def update_tiles(self):
+        '''
+        Grab chunks around center and load them
+        '''
         loaded_chunks = []            
         min_render = self.center_chunk - Vector2(self.render_dist,self.render_dist)
         if self.render_dist > 1:        
@@ -37,7 +51,11 @@ class ChunkManager(HashTable):
                 loaded_chunks.append(local_chunk)
         return loaded_chunks
 
-    def update(self, chunks,  position):
+    def update(self, chunks):
+        '''
+        Create game objects from elements of loaded chunks
+        :params chunks: list, list of loaded chunks
+        '''
         tiles = {}
         for chunk_id in chunks:
             if chunk_id in self.elements:

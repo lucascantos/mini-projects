@@ -51,6 +51,9 @@ class GameObject(pygame.sprite.Sprite):
 
 class Character(GameObject):
     def __init__(self, position, global_pos, graphics):
+        '''
+        Character object
+        '''
         super().__init__(Vector2(32,32),position) # Standard graphic size 32x32
 
         self.animations = {} # Animations of object
@@ -90,12 +93,13 @@ class Character(GameObject):
                 self.state = 'idle'
                 
     def move(self, offset):
-        # check if bottom collision is true
         self.global_pos += offset
 
     def make_animations(self, animation_info, directions):
         '''
         Create animation dictionary with all elements already in place and loaded
+        :params animation_info: dict, All informations regarding the character animation
+        :params direction: int, direction the charcater is facing
         '''
         animation_sheet = []
         if animation_info['type'] == 'sheet':
@@ -126,20 +130,27 @@ class Character(GameObject):
             output[name] = all_dir
         return output
     
-    def relative_position(self, position):
-        return self.position - (self.global_pos - position) * 32
 class TerrainTile(GameObject):
+    '''
+    Terrain tiles such as grass and water
+    '''
     def __init__(self, position, global_pos, graphic):
         super().__init__(Vector2(32,32), position)
         self.image = graphic
         self.global_pos = global_pos
 
 class ResourcesTile(TerrainTile):
+    '''
+    In game resources such as trees and rocks
+    '''
     def __init__(self, position, global_pos, graphic):
         super().__init__(position, global_pos, graphic)
         self.radius = int(32/4)
 
 class CircleCollision(pygame.sprite.Sprite):
+    '''
+    Circle colliision box object
+    '''
     def __init__(self,position, radius=None, size=[32,32]):
         self.rect = pygame.Rect([0,0], [16,16])
         self.rect.center = Vector2(position) + Vector2(0,int(size[1]/2))

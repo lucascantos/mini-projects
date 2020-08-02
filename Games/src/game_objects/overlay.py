@@ -7,6 +7,10 @@ from pygame import Color
 
 class SkyTint(GameObject):
     def __init__(self, starting_hour=15):
+        '''
+        Adds an tint to the image for a day/night cycle
+        :param starting_hour: float, starting hour
+        '''
         super().__init__(SCREEN_DIM, [0,0])
         self.image = pygame.Surface(round_vector(SCREEN_DIM), pygame.SRCALPHA)
         self.color_pallet = skytint
@@ -22,14 +26,23 @@ class SkyTint(GameObject):
         self.color.hsva = self.color_pallet[self.time]
         self.target_color.hsva = self.color_pallet[self.target_time]
         self.set_calc()
+        self.hour = self.calc_hour(starting_hour)
 
     def set_calc(self):
+        '''
+        Equations for transition between hour values
+        '''
         if self.target_time > self.time:
             self.calc_hour = lambda x: (x - self.time) / (self.target_time - self.time)
         else:
             self.calc_hour = lambda x: (x - self.time) / (24+self.target_time - (self.time)) if x > self.time else (x + (24-self.time)) / (24+self.target_time - (self.time))
 
     def set_color(self, hour):
+        '''
+        Change color based on current hour using interpolation between pallet colors
+        :param hours: float, time of day cycle
+        '''
+        # print(self.time, self.target_time, hour)
         if  0 > self.calc_hour(hour) or self.calc_hour(hour) > 1:
             self.time = self.target_time
             for h in range(1,25):

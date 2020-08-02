@@ -1,5 +1,8 @@
 from time import time
 def timeit(func):
+    '''
+    Mesure time of function
+    '''
     def wrapper(*args, **kwargs):
         start = time()
         output = func(*args, **kwargs)

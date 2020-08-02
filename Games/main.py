@@ -35,7 +35,11 @@ def main():
     render_dist = 3 # In Chunks
 
     martha = Character(Vector2(new_screen.center), Vector2(253, 538), characters['martha'])
-    sky = SkyTint()
+
+    from time import time
+    start = time()
+
+    sky = SkyTint(15)
     relative_position = lambda x: martha.position - (martha.global_pos - x) * 32
     
     # TODO: about camera and stuff
@@ -51,8 +55,6 @@ def main():
     def walk_collision(sprite, other):
         return pygame.sprite.collide_circle(circle_collider(sprite), circle_collider(other))
 
-    from time import time
-    start = time()
     while new_screen.toggle_run:
         # Input
         for event in pygame.event.get():
@@ -111,7 +113,7 @@ def main():
         '''
         
 
-        hour = (time() - start)/2
+        hour = (time() - start)
         if hour >= 24:
             start =time()
             hour -= 24
